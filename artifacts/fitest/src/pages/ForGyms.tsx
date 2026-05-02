@@ -67,12 +67,12 @@ export default function ForGyms() {
               Fitest gives gym owners and coaches a fast, structured view of member readiness:
               training quality, recovery, nutrition and resilience — scored and tiered in under 4 minutes.
             </p>
-            <Link href="/">
+            <Link href="/demo">
               <Button
                 size="lg"
                 className="h-14 px-10 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Start Free Audit
+                Request Demo
               </Button>
             </Link>
           </motion.div>
@@ -141,9 +141,9 @@ export default function ForGyms() {
                 baseline on day one, so every coaching conversation is grounded in real data
                 — not assumptions.
               </p>
-              <Link href="/">
+              <Link href="/demo">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
-                  Run an Audit
+                  Request Demo
                 </Button>
               </Link>
             </div>
@@ -173,16 +173,27 @@ export default function ForGyms() {
             Ready to benchmark your members?
           </h2>
           <p className="text-muted-foreground mb-8">
-            Run the free audit today and see where your members really score.
+            Deploy the audit system for your members. Gym licences start from £149/yr.
           </p>
-          <Link href="/">
-            <Button
-              size="lg"
-              className="h-14 px-10 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Start Free Audit
-            </Button>
-          </Link>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link href="/demo">
+              <Button
+                size="lg"
+                className="h-14 px-10 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Request Demo
+              </Button>
+            </Link>
+            <a href="/#pricing">
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-14 px-10 text-lg font-bold rounded-full border-border hover:bg-muted"
+              >
+                Get Licence
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
     </div>

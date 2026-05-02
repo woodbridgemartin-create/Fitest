@@ -504,9 +504,11 @@ export default function Home() {
                           <h3 className="text-xl font-bold mb-2">{title}</h3>
                           <p className="text-sm text-muted-foreground leading-relaxed mb-6">{desc}</p>
                           <div className="flex gap-3">
-                            <Button onClick={() => handleSelectAudit(path)} className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
-                              {cta}
-                            </Button>
+                            <Link href="/demo">
+                              <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
+                                Request Demo
+                              </Button>
+                            </Link>
                             <Link href={page}>
                               <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                                 Learn more
@@ -707,7 +709,7 @@ export default function Home() {
                     disabled={!consentMedical || !consentPrivacy}
                     className="flex-1 h-12 font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
                   >
-                    Start Audit
+                    Begin Audit
                   </Button>
                   <Button
                     variant="outline"
@@ -1033,7 +1035,7 @@ export default function Home() {
                   Download Report
                 </Button>
                 <Button variant="outline" size="lg" onClick={handleRetake} className="h-12 px-8 border-border hover:bg-muted font-semibold uppercase tracking-wider">
-                  Retake Audit
+                  New Audit
                 </Button>
               </motion.div>
 

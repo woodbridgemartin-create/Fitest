@@ -90,7 +90,7 @@ export default function Terms() {
             <section>
               <h2 className="text-lg font-bold text-foreground mb-3">8. Commercial Licences</h2>
               <p className="leading-relaxed">
-                Business and gym operators who wish to deploy Fitest for commercial use, white-label deployment or team-level analytics must enter into a separate commercial licence agreement with Leadsopedia Limited. The free audit tool is provided for individual use only.
+                Business and gym operators who wish to deploy Fitest for commercial use, white-label deployment or team-level analytics must enter into a separate commercial licence agreement with Leadsopedia Limited. Access to the audit system is provided exclusively to licensed organisations.
               </p>
             </section>
 

@@ -67,12 +67,12 @@ export default function ForBusinesses() {
               Fitest gives HR leaders and managers a fast, evidence-informed view of workforce
               readiness: energy, recovery, stress, and output — scored and tiered in under 4 minutes.
             </p>
-            <Link href="/">
+            <Link href="/demo">
               <Button
                 size="lg"
                 className="h-14 px-10 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Start Free Audit
+                Request Demo
               </Button>
             </Link>
           </motion.div>
@@ -141,9 +141,9 @@ export default function ForBusinesses() {
                 Fitest is not a wellness survey. It is a performance intelligence platform —
                 built to surface where human performance is breaking down before it costs you.
               </p>
-              <Link href="/">
+              <Link href="/demo">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
-                  Run an Audit
+                  Request Demo
                 </Button>
               </Link>
             </div>
@@ -173,16 +173,27 @@ export default function ForBusinesses() {
             Ready to benchmark your workforce?
           </h2>
           <p className="text-muted-foreground mb-8">
-            Run the free audit today and see where your team scores.
+            Deploy the audit system across your team. Business licences start from £249/yr.
           </p>
-          <Link href="/">
-            <Button
-              size="lg"
-              className="h-14 px-10 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Start Free Audit
-            </Button>
-          </Link>
+          <div className="flex flex-wrap gap-4 justify-center">
+            <Link href="/demo">
+              <Button
+                size="lg"
+                className="h-14 px-10 text-lg font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Request Demo
+              </Button>
+            </Link>
+            <a href="/#pricing">
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-14 px-10 text-lg font-bold rounded-full border-border hover:bg-muted"
+              >
+                Get Licence
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
     </div>
