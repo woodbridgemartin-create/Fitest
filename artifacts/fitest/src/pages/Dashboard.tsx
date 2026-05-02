@@ -8,12 +8,13 @@ type Period   = "7d" | "30d" | "all";
 
 type LiveResult = {
   clientId: string;
+  entryId?: string;
   score: number;
   tier: string;
   auditType: string;
-  email: string;
-  company: string;
+  email?: string;
   department?: string;
+  wantsSupport?: boolean;
   timestamp: string;
 };
 
@@ -85,21 +86,22 @@ const GYM_SUBS: GymSub[] = (() => {
       const date    = new Date(NOW);
       date.setDate(date.getDate() - daysAgo);
       date.setHours(hours, mins, 0, 0);
-      out.push({ id: id++, score, tier, label: `Member ${id}`, date });
+      id++;
+      out.push({ id: id - 1, score, tier, label: `Entry ${id}`, date });
     }
   }
   return out.sort((a, b) => b.date.getTime() - a.date.getTime());
 })();
 
-/* ─── Gym support panel (static) ────────────────────── */
+/* ─── Gym support requests (static mock) ─────────────── */
 const GYM_SUPPORT = [
-  { name: "Jordan Mitchell", score: 19, tier: "Critical" as TierName, issue: "Chronic fatigue, requested coach call",   date: "30 Apr" },
-  { name: "Sam Patel",       score: 22, tier: "Critical" as TierName, issue: "Sleep disruption, low energy flagged",    date: "30 Apr" },
-  { name: "Riley Thompson",  score: 24, tier: "Critical" as TierName, issue: "Requested nutrition guidance",            date: "29 Apr" },
-  { name: "Alex Nguyen",     score: 31, tier: "Exposed"  as TierName, issue: "Stress management, follow-up needed",    date: "28 Apr" },
-  { name: "Morgan Davis",    score: 28, tier: "Exposed"  as TierName, issue: "Recovery concerns, asked for programme", date: "27 Apr" },
-  { name: "Casey Williams",  score: 33, tier: "Exposed"  as TierName, issue: "Wants tailored training plan",           date: "26 Apr" },
-  { name: "Taylor Brown",    score: 21, tier: "Critical" as TierName, issue: "Requested referral to physiotherapist",  date: "25 Apr" },
+  { entryId: "ENT-A1B2C3", email: "member@example.com",    score: 19, tier: "Critical" as TierName, date: "30 Apr" },
+  { entryId: "ENT-D4E5F6", email: "athlete@gym.co.uk",     score: 22, tier: "Critical" as TierName, date: "30 Apr" },
+  { entryId: "ENT-G7H8I9", email: "user3@mailbox.com",     score: 24, tier: "Critical" as TierName, date: "29 Apr" },
+  { entryId: "ENT-J1K2L3", email: "member4@training.com",  score: 31, tier: "Exposed"  as TierName, date: "28 Apr" },
+  { entryId: "ENT-M4N5O6", email: "client5@gym.co.uk",     score: 28, tier: "Exposed"  as TierName, date: "27 Apr" },
+  { entryId: "ENT-P7Q8R9", email: "user6@example.com",     score: 33, tier: "Exposed"  as TierName, date: "26 Apr" },
+  { entryId: "ENT-S1T2U3", email: "member7@fitness.co.uk", score: 21, tier: "Critical" as TierName, date: "25 Apr" },
 ];
 
 /* ─── Utilities ──────────────────────────────────────── */
@@ -318,6 +320,56 @@ function RecentActivity({ bizSubs, gymSubs, mode }: {
   bizSubs: BizSub[]; gymSubs: GymSub[]; mode: DashMode;
 }) {
   const recent = (mode === "business" ? bizSubs : gymSubs).slice(0, 10);
+
+  if (mode === "business") {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.38, duration: 0.4 }}
+        className="bg-card border border-card-border rounded-2xl p-6 mt-6"
+      >
+        <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">
+          Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">— last 10 submissions</span>
+        </p>
+        <div className="hidden md:grid grid-cols-[90px_1fr_110px_130px_90px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+          <span className="text-xs text-muted-foreground/40 font-semibold">Entry ID</span>
+          <span className="text-xs text-muted-foreground/40 font-semibold">Department</span>
+          <span className="text-xs text-muted-foreground/40 font-semibold">Score / Tier</span>
+          <span className="text-xs text-muted-foreground/40 font-semibold">Date</span>
+          <span className="text-xs text-muted-foreground/40 font-semibold text-right">Time</span>
+        </div>
+        <div className="space-y-0.5">
+          {(recent as BizSub[]).map((s, i) => {
+            const c = TIER[s.tier];
+            const entryId = `ENT-${String(s.id + 1).padStart(4, "0")}`;
+            return (
+              <motion.div
+                key={s.id}
+                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.42 + i * 0.04, duration: 0.3 }}
+                className="grid grid-cols-[90px_1fr_auto] md:grid-cols-[90px_1fr_110px_130px_90px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
+              >
+                <span className="text-xs font-mono text-muted-foreground/50">{entryId}</span>
+                <span className="text-sm font-medium truncate">{s.department}</span>
+                <div className="flex items-center gap-2">
+                  <div className={`w-8 h-8 rounded-lg ${c.dim} border ${c.border} flex items-center justify-center shrink-0`}>
+                    <span className={`text-xs font-black ${c.text}`}>{s.score}</span>
+                  </div>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
+                    {s.tier}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground/60 hidden md:block tabular-nums">{fmtDate(s.date)}</span>
+                <span className="text-xs text-muted-foreground/40 text-right hidden md:block tabular-nums">{fmtTime(s.date)}</span>
+              </motion.div>
+            );
+          })}
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Gym mode
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -327,23 +379,16 @@ function RecentActivity({ bizSubs, gymSubs, mode }: {
       <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">
         Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">— last 10 submissions</span>
       </p>
-
-      {/* Header row */}
       <div className="hidden md:grid grid-cols-[40px_1fr_110px_130px_90px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
         <span className="text-xs text-muted-foreground/40 font-semibold">Score</span>
-        <span className="text-xs text-muted-foreground/40 font-semibold">
-          {mode === "business" ? "Department" : "Member"}
-        </span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">Entry</span>
         <span className="text-xs text-muted-foreground/40 font-semibold">Tier</span>
         <span className="text-xs text-muted-foreground/40 font-semibold">Date</span>
         <span className="text-xs text-muted-foreground/40 font-semibold text-right">Time</span>
       </div>
-
       <div className="space-y-0.5">
-        {recent.map((s, i) => {
-          const c   = TIER[s.tier];
-          const biz = s as BizSub;
-          const gym = s as GymSub;
+        {(recent as GymSub[]).map((s, i) => {
+          const c = TIER[s.tier];
           return (
             <motion.div
               key={s.id}
@@ -354,18 +399,12 @@ function RecentActivity({ bizSubs, gymSubs, mode }: {
               <div className={`w-9 h-9 rounded-xl ${c.dim} border ${c.border} flex items-center justify-center`}>
                 <span className={`text-xs font-black ${c.text}`}>{s.score}</span>
               </div>
-              <span className="text-sm font-medium truncate">
-                {mode === "business" ? biz.department : gym.label}
-              </span>
+              <span className="text-sm font-medium text-muted-foreground/60 tabular-nums">{s.label}</span>
               <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
                 {s.tier}
               </span>
-              <span className="text-xs text-muted-foreground/60 hidden md:block tabular-nums">
-                {fmtDate(s.date)}
-              </span>
-              <span className="text-xs text-muted-foreground/40 text-right hidden md:block tabular-nums">
-                {fmtTime(s.date)}
-              </span>
+              <span className="text-xs text-muted-foreground/60 hidden md:block tabular-nums">{fmtDate(s.date)}</span>
+              <span className="text-xs text-muted-foreground/40 text-right hidden md:block tabular-nums">{fmtTime(s.date)}</span>
             </motion.div>
           );
         })}
@@ -738,37 +777,36 @@ export default function Dashboard() {
                 <motion.div className="lg:col-span-3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32, duration: 0.4 }}>
                   <div className="bg-card border border-card-border rounded-2xl p-6 h-full">
                     <div className="flex items-center justify-between mb-5">
-                      <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Members Requesting Support</p>
+                      <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Support Requests</p>
                       <span className="text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 rounded-full px-2.5 py-0.5">
                         {GYM_SUPPORT.length} pending
                       </span>
                     </div>
-                    <div className="space-y-1">
+                    {/* Column headers */}
+                    <div className="hidden md:grid grid-cols-[40px_1fr_90px_70px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+                      <span className="text-xs text-muted-foreground/40 font-semibold">Score</span>
+                      <span className="text-xs text-muted-foreground/40 font-semibold">Email</span>
+                      <span className="text-xs text-muted-foreground/40 font-semibold">Tier</span>
+                      <span className="text-xs text-muted-foreground/40 font-semibold text-right">Date</span>
+                    </div>
+                    <div className="space-y-0.5">
                       {GYM_SUPPORT.map((m, i) => {
                         const c = TIER[m.tier];
                         return (
                           <motion.div
-                            key={m.name}
+                            key={m.entryId}
                             initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.35 + i * 0.05, duration: 0.3 }}
-                            className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-colors group"
+                            className="grid grid-cols-[40px_1fr_auto] md:grid-cols-[40px_1fr_90px_70px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-colors group"
                           >
                             <div className={`w-9 h-9 rounded-xl ${c.dim} border ${c.border} flex items-center justify-center shrink-0`}>
                               <span className={`text-xs font-black ${c.text}`}>{m.score}</span>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="text-sm font-semibold">{m.name}</span>
-                                <span className={`text-xs font-bold px-1.5 py-0 rounded ${c.dim} ${c.text}`}>{m.tier}</span>
-                              </div>
-                              <p className="text-xs text-muted-foreground leading-relaxed truncate">{m.issue}</p>
-                            </div>
-                            <div className="flex flex-col items-end gap-1.5 shrink-0">
-                              <span className="text-xs text-muted-foreground/40">{m.date}</span>
-                              <button className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity font-semibold">
-                                Resolve
-                              </button>
-                            </div>
+                            <span className="text-sm text-muted-foreground/80 truncate font-mono text-xs">{m.email}</span>
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
+                              {m.tier}
+                            </span>
+                            <span className="text-xs text-muted-foreground/40 text-right">{m.date}</span>
                           </motion.div>
                         );
                       })}
@@ -817,50 +855,122 @@ export default function Dashboard() {
                   <p className="text-xs text-muted-foreground/50 mt-1">Share your audit link above to start collecting results</p>
                 </div>
               </div>
-            ) : (
-              <>
-                {/* Header row */}
-                <div className="hidden md:grid grid-cols-[40px_1fr_140px_110px_160px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
-                  <span className="text-xs text-muted-foreground/40 font-semibold">Score</span>
-                  <span className="text-xs text-muted-foreground/40 font-semibold">Company / Department</span>
-                  <span className="text-xs text-muted-foreground/40 font-semibold">Type</span>
-                  <span className="text-xs text-muted-foreground/40 font-semibold">Tier</span>
-                  <span className="text-xs text-muted-foreground/40 font-semibold text-right">Date</span>
-                </div>
-                <div className="space-y-0.5">
-                  {liveResults.map((r, i) => {
-                    const tierKey = r.tier as TierName;
-                    const c = TIER[tierKey] ?? TIER.Performing;
-                    const dt = new Date(r.timestamp);
-                    return (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.52 + i * 0.04, duration: 0.3 }}
-                        className="grid grid-cols-[40px_1fr_auto] md:grid-cols-[40px_1fr_140px_110px_160px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
-                      >
-                        <div className={`w-9 h-9 rounded-xl ${c.dim} border ${c.border} flex items-center justify-center`}>
-                          <span className={`text-xs font-black ${c.text}`}>{r.score}</span>
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold truncate">{r.company}</p>
-                          {r.department && <p className="text-xs text-muted-foreground/60 truncate">{r.department}</p>}
-                        </div>
-                        <span className="hidden md:block text-xs text-muted-foreground capitalize">{r.auditType}</span>
-                        <span className={`hidden md:block text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} w-fit`}>
-                          {r.tier}
+            ) : (() => {
+              const bizLive   = liveResults.filter(r => r.auditType === "business");
+              const gymAnon   = liveResults.filter(r => r.auditType === "gym" && !r.wantsSupport);
+              const gymSupport = liveResults.filter(r => r.auditType === "gym" && r.wantsSupport);
+
+              function LiveRow({ r, i }: { r: LiveResult; i: number }) {
+                const c  = TIER[r.tier as TierName] ?? TIER.Performing;
+                const dt = new Date(r.timestamp);
+                return (
+                  <motion.div
+                    key={r.entryId ?? i}
+                    initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.52 + i * 0.04, duration: 0.3 }}
+                    className="grid grid-cols-[80px_1fr_auto] md:grid-cols-[80px_1fr_110px_160px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
+                  >
+                    <span className="text-xs font-mono text-muted-foreground/50">{r.entryId ?? "—"}</span>
+                    <span className="text-sm truncate text-muted-foreground/70">{r.department ?? "—"}</span>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-8 h-8 rounded-lg ${c.dim} border ${c.border} flex items-center justify-center shrink-0`}>
+                        <span className={`text-xs font-black ${c.text}`}>{r.score}</span>
+                      </div>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
+                        {r.tier}
+                      </span>
+                    </div>
+                    <div className="text-right hidden md:block">
+                      <p className="text-xs text-muted-foreground/60">{dt.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                      <p className="text-xs text-muted-foreground/40">{dt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</p>
+                    </div>
+                  </motion.div>
+                );
+              }
+
+              return (
+                <div className="space-y-6">
+                  {/* Business entries */}
+                  {bizLive.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground/40 uppercase tracking-widest px-3 mb-2">Business Entries</p>
+                      <div className="hidden md:grid grid-cols-[80px_1fr_110px_160px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Entry ID</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Department</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Score / Tier</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold text-right">Date</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        {bizLive.map((r, i) => <LiveRow key={r.entryId ?? i} r={r} i={i} />)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Gym anonymous entries */}
+                  {gymAnon.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-muted-foreground/40 uppercase tracking-widest px-3 mb-2">Gym Entries <span className="normal-case font-normal">(anonymous)</span></p>
+                      <div className="hidden md:grid grid-cols-[80px_1fr_110px_160px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Entry ID</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold">—</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Score / Tier</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold text-right">Date</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        {gymAnon.map((r, i) => <LiveRow key={r.entryId ?? i} r={r} i={i} />)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Gym support requests */}
+                  {gymSupport.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 px-3 mb-2">
+                        <p className="text-xs font-semibold text-muted-foreground/40 uppercase tracking-widest">Support Requests</p>
+                        <span className="text-xs font-bold bg-primary/10 text-primary border border-primary/20 rounded-full px-2 py-0">
+                          {gymSupport.length}
                         </span>
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground/60 hidden md:block">{dt.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
-                          <p className="text-xs text-muted-foreground/40 hidden md:block">{dt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</p>
-                          <span className={`md:hidden text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border}`}>{r.tier}</span>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                      </div>
+                      <div className="hidden md:grid grid-cols-[80px_1fr_110px_160px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Entry ID</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Email</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold">Score / Tier</span>
+                        <span className="text-xs text-muted-foreground/40 font-semibold text-right">Date</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        {gymSupport.map((r, i) => {
+                          const c  = TIER[r.tier as TierName] ?? TIER.Performing;
+                          const dt = new Date(r.timestamp);
+                          return (
+                            <motion.div
+                              key={r.entryId ?? i}
+                              initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.52 + i * 0.04, duration: 0.3 }}
+                              className="grid grid-cols-[80px_1fr_auto] md:grid-cols-[80px_1fr_110px_160px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
+                            >
+                              <span className="text-xs font-mono text-muted-foreground/50">{r.entryId ?? "—"}</span>
+                              <span className="text-xs font-mono text-muted-foreground/70 truncate">{r.email ?? "—"}</span>
+                              <div className="flex items-center gap-2">
+                                <div className={`w-8 h-8 rounded-lg ${c.dim} border ${c.border} flex items-center justify-center shrink-0`}>
+                                  <span className={`text-xs font-black ${c.text}`}>{r.score}</span>
+                                </div>
+                                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
+                                  {r.tier}
+                                </span>
+                              </div>
+                              <div className="text-right hidden md:block">
+                                <p className="text-xs text-muted-foreground/60">{dt.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                                <p className="text-xs text-muted-foreground/40">{dt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</p>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </>
-            )}
+              );
+            })()}
           </motion.div>
         )}
 

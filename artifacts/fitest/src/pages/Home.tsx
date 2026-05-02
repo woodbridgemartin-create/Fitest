@@ -230,10 +230,9 @@ export default function Home() {
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [companyNameError, setCompanyNameError] = useState("");
   const [department, setDepartment] = useState("");
   const [departmentError, setDepartmentError] = useState("");
+  const [wantsSupport, setWantsSupport] = useState(false);
   const [resultScore, setResultScore] = useState<number | null>(null);
   const [consentMedical, setConsentMedical] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
@@ -294,36 +293,35 @@ export default function Home() {
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     let hasError = false;
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError("Please enter a valid email address.");
-      hasError = true;
-    }
-    if (!companyName.trim()) {
-      setCompanyNameError(auditPath === "gym" ? "Please enter your gym name." : "Please enter your company name.");
-      hasError = true;
-    }
     if (auditPath === "business" && !department.trim()) {
       setDepartmentError("Please enter your department.");
+      hasError = true;
+    }
+    if (auditPath === "gym" && wantsSupport && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      setEmailError("Please enter a valid email address.");
       hasError = true;
     }
     if (hasError) return;
     const total = answers.reduce((a, b) => a + (b ?? 0), 0);
     const score = Math.round((total / (questions.length * 5)) * 100);
+    const entryId = "ENT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
     setResultScore(score);
     setPhase("result");
-    // Persist result to localStorage for dashboard
     try {
       const tier = getTier(score);
-      const record = {
+      const record: Record<string, unknown> = {
         clientId: clientId || "direct",
+        entryId,
         score,
         tier,
         auditType: auditPath,
-        email,
-        company: companyName,
-        department: auditPath === "business" ? department : undefined,
         timestamp: new Date().toISOString(),
       };
+      if (auditPath === "business") record.department = department;
+      if (auditPath === "gym") {
+        record.wantsSupport = wantsSupport;
+        if (wantsSupport) record.email = email;
+      }
       const prev = JSON.parse(localStorage.getItem("fitest_results") || "[]");
       localStorage.setItem("fitest_results", JSON.stringify([record, ...prev]));
     } catch { /* non-critical */ }
@@ -335,10 +333,9 @@ export default function Home() {
     setResultScore(null);
     setEmail("");
     setEmailError("");
-    setCompanyName("");
-    setCompanyNameError("");
     setDepartment("");
     setDepartmentError("");
+    setWantsSupport(false);
     setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   };
 
@@ -931,13 +928,13 @@ export default function Home() {
             <motion.div key="email" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="min-h-screen flex items-start justify-center px-4 py-16">
               <div className="max-w-md w-full">
 
-                {/* Security badge */}
+                {/* Badge */}
                 <div className="flex items-center justify-center gap-2 mb-8">
                   <div className="flex items-center gap-2 bg-card border border-card-border rounded-full px-4 py-1.5">
                     <svg className="w-3.5 h-3.5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                     </svg>
-                    <span className="text-xs font-semibold text-muted-foreground tracking-wide">Secure &amp; Confidential Audit</span>
+                    <span className="text-xs font-semibold text-muted-foreground tracking-wide">Anonymous &amp; Confidential</span>
                   </div>
                 </div>
 
@@ -948,42 +945,15 @@ export default function Home() {
                     </div>
                     <h2 className="text-xl font-black mb-1.5">One last step</h2>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      Enter your details to receive your personalised performance report. Your data is processed securely and never shared.
+                      {auditPath === "business"
+                        ? "Your response is anonymous. Adding your department helps your organisation group results by team."
+                        : "Your results are completely anonymous. You can optionally request support from this gym."}
                     </p>
                   </div>
 
                   <form onSubmit={handleEmailSubmit} className="space-y-4">
-                    {/* Work email */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        {auditPath === "gym" ? "Email Address" : "Work Email"}
-                      </label>
-                      <Input
-                        type="email"
-                        placeholder={auditPath === "gym" ? "you@example.com" : "you@company.com"}
-                        value={email}
-                        onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
-                        className="h-11 bg-background border-border focus:border-primary"
-                      />
-                      {emailError && <p className="text-red-400 text-xs mt-1">{emailError}</p>}
-                    </div>
 
-                    {/* Company / Gym name */}
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        {auditPath === "gym" ? "Gym Name" : "Company Name"}
-                      </label>
-                      <Input
-                        type="text"
-                        placeholder={auditPath === "gym" ? "e.g. Apex Performance Gym" : "e.g. Acme Corporation"}
-                        value={companyName}
-                        onChange={(e) => { setCompanyName(e.target.value); setCompanyNameError(""); }}
-                        className="h-11 bg-background border-border focus:border-primary"
-                      />
-                      {companyNameError && <p className="text-red-400 text-xs mt-1">{companyNameError}</p>}
-                    </div>
-
-                    {/* Department — business only */}
+                    {/* Business: department only */}
                     {auditPath === "business" && (
                       <div className="space-y-1.5">
                         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Department</label>
@@ -998,6 +968,49 @@ export default function Home() {
                       </div>
                     )}
 
+                    {/* Gym: support checkbox + conditional email */}
+                    {auditPath === "gym" && (
+                      <div className="space-y-4">
+                        <label className="flex items-start gap-3 cursor-pointer group p-4 rounded-xl border border-border hover:border-primary/30 bg-background transition-colors">
+                          <input
+                            type="checkbox"
+                            checked={wantsSupport}
+                            onChange={(e) => { setWantsSupport(e.target.checked); setEmail(""); setEmailError(""); }}
+                            className="mt-0.5 w-4 h-4 rounded border-border accent-primary cursor-pointer shrink-0"
+                          />
+                          <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">
+                            I would like coaching or support from this gym
+                          </span>
+                        </label>
+
+                        <AnimatePresence>
+                          {wantsSupport && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.25 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="space-y-1.5 pt-1">
+                                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                  Email Address <span className="text-primary">*</span>
+                                </label>
+                                <Input
+                                  type="email"
+                                  placeholder="you@example.com"
+                                  value={email}
+                                  onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
+                                  className="h-11 bg-background border-border focus:border-primary"
+                                />
+                                {emailError && <p className="text-red-400 text-xs mt-1">{emailError}</p>}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
+
                     <Button type="submit" size="lg" className="w-full h-12 font-bold bg-primary text-primary-foreground hover:bg-primary/90 mt-2">
                       Reveal My Score
                     </Button>
@@ -1008,7 +1021,7 @@ export default function Home() {
                     {[
                       { icon: "M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z", label: "SSL Secured" },
                       { icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", label: "GDPR Compliant" },
-                      { icon: "M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88", label: "No Spam" },
+                      { icon: "M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88", label: "Anonymous" },
                     ].map(({ icon, label }) => (
                       <div key={label} className="flex flex-col items-center gap-1.5 text-center">
                         <svg className="w-4 h-4 text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
