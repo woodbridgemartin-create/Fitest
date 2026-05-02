@@ -27,8 +27,7 @@ function AnimatedCounter({ value }: { value: number }) {
 }
 
 interface PrintReportProps {
-  email: string;
-  companyName: string;
+  entryId: string;
   department: string;
   auditPath: AuditPath;
   questions: string[];
@@ -43,7 +42,7 @@ const TIER_COLORS: Record<string, string> = {
   Elite: "#10b981",
 };
 
-function PrintReport({ email, companyName, department, auditPath, questions, answers, score }: PrintReportProps) {
+function PrintReport({ entryId, department, auditPath, questions, answers, score }: PrintReportProps) {
   const tier = getTier(score);
   const label = auditPath === "gym" ? "Member Performance Audit" : "Workforce Performance Audit";
   const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -107,8 +106,7 @@ function PrintReport({ email, companyName, department, auditPath, questions, ans
 
         <div className="rpt-p1-meta">
           <span>Report generated: {reportDate}</span>
-          <span>Prepared for: <strong>{email}</strong></span>
-          {companyName && <span>{auditPath === "gym" ? "Gym" : "Organisation"}: <strong>{companyName}</strong></span>}
+          <span>Entry ID: <strong>{entryId}</strong></span>
           {department && <span>Department: <strong>{department}</strong></span>}
         </div>
 
@@ -230,6 +228,7 @@ export default function Home() {
   const [answers, setAnswers] = useState<(number | null)[]>([]);
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [printEntryId, setPrintEntryId] = useState("");
   const [department, setDepartment] = useState("");
   const [departmentError, setDepartmentError] = useState("");
   const [wantsSupport, setWantsSupport] = useState(false);
@@ -305,6 +304,7 @@ export default function Home() {
     const total = answers.reduce((a, b) => a + (b ?? 0), 0);
     const score = Math.round((total / (questions.length * 5)) * 100);
     const entryId = "ENT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    setPrintEntryId(entryId);
     setResultScore(score);
     setPhase("result");
     try {
@@ -336,6 +336,7 @@ export default function Home() {
     setDepartment("");
     setDepartmentError("");
     setWantsSupport(false);
+    setPrintEntryId("");
     setTimeout(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   };
 
@@ -345,7 +346,7 @@ export default function Home() {
   return (
     <>
       {resultScore !== null && auditPath && (
-        <PrintReport email={email} companyName={companyName} department={department} auditPath={auditPath} questions={questions} answers={answers} score={resultScore} />
+        <PrintReport entryId={printEntryId} department={department} auditPath={auditPath} questions={questions} answers={answers} score={resultScore} />
       )}
 
       <div className="min-h-screen bg-background text-foreground print:hidden" ref={topRef}>
