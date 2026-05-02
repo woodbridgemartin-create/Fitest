@@ -9,6 +9,10 @@ import ForBusinesses from "@/pages/ForBusinesses";
 import ForGyms from "@/pages/ForGyms";
 import FAQ from "@/pages/FAQ";
 import Contact from "@/pages/Contact";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
+import GDPR from "@/pages/GDPR";
+import MedicalDisclaimer from "@/pages/MedicalDisclaimer";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -24,6 +28,10 @@ function Router() {
           <Route path="/for-gyms" component={ForGyms} />
           <Route path="/faq" component={FAQ} />
           <Route path="/contact" component={Contact} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/gdpr" component={GDPR} />
+          <Route path="/medical-disclaimer" component={MedicalDisclaimer} />
           <Route component={NotFound} />
         </Switch>
       </div>

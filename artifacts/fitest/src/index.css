@@ -379,4 +379,21 @@
     text-align: right;
     shrink: 0;
   }
+
+  .print-disclaimer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 11px;
+    color: #888;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  nav,
+  header,
+  footer,
+  .print-hidden {
+    display: none !important;
+  }
 }
