@@ -9,7 +9,6 @@ const NAV_LINKS = [
   { label: "For Gyms", href: "/for-gyms" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
-  { label: "Privacy Policy", href: "/privacy-policy" },
 ];
 
 export default function Header() {
