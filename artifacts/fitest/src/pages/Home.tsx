@@ -237,10 +237,17 @@ export default function Home() {
   const [resultScore, setResultScore] = useState<number | null>(null);
   const [consentMedical, setConsentMedical] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
+  const [clientId, setClientId] = useState("");
 
   const topRef = useRef<HTMLDivElement>(null);
   const consentRef = useRef<HTMLDivElement>(null);
   const auditRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    const c = p.get("client");
+    if (c) setClientId(c);
+  }, []);
 
   const questions = auditPath === "gym" ? GYM_QUESTIONS : BUSINESS_QUESTIONS;
   const auditLabel = auditPath === "gym" ? "Member Performance Audit" : "Workforce Performance Audit";
@@ -304,6 +311,22 @@ export default function Home() {
     const score = Math.round((total / (questions.length * 5)) * 100);
     setResultScore(score);
     setPhase("result");
+    // Persist result to localStorage for dashboard
+    try {
+      const tier = getTier(score);
+      const record = {
+        clientId: clientId || "direct",
+        score,
+        tier,
+        auditType: auditPath,
+        email,
+        company: companyName,
+        department: auditPath === "business" ? department : undefined,
+        timestamp: new Date().toISOString(),
+      };
+      const prev = JSON.parse(localStorage.getItem("fitest_results") || "[]");
+      localStorage.setItem("fitest_results", JSON.stringify([record, ...prev]));
+    } catch { /* non-critical */ }
   };
 
   const handleRetake = () => {

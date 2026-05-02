@@ -6,6 +6,17 @@ import { Button } from "@/components/ui/button";
 type DashMode = "business" | "gym";
 type Period   = "7d" | "30d" | "all";
 
+type LiveResult = {
+  clientId: string;
+  score: number;
+  tier: string;
+  auditType: string;
+  email: string;
+  company: string;
+  department?: string;
+  timestamp: string;
+};
+
 /* ─── Colour system ──────────────────────────────────── */
 const TIER = {
   Critical:   { bar: "bg-red-500",     text: "text-red-400",     dim: "bg-red-500/10",     border: "border-red-500/20",   hex: "#ef4444" },
@@ -380,10 +391,22 @@ function PeriodBtn({ label, active, onClick }: { label: string; active: boolean;
 /* ─── Main component ─────────────────────────────────── */
 export default function Dashboard() {
   const [, navigate]  = useLocation();
-  const [userEmail, setUserEmail] = useState("");
-  const [orgName, setOrgName]     = useState("Your Organisation");
-  const [mode, setMode]           = useState<DashMode>("business");
-  const [period, setPeriod]       = useState<Period>("30d");
+  const [userEmail, setUserEmail]   = useState("");
+  const [orgName, setOrgName]       = useState("Your Organisation");
+  const [mode, setMode]             = useState<DashMode>("business");
+  const [period, setPeriod]         = useState<Period>("30d");
+  const [clientId, setClientId]     = useState("");
+  const [liveResults, setLiveResults] = useState<LiveResult[]>([]);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const auditLink = clientId ? `https://fitest.co.uk/?client=${clientId}` : "";
+
+  function handleCopyLink() {
+    if (!auditLink) return;
+    navigator.clipboard.writeText(auditLink).catch(() => {});
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 2000);
+  }
 
   useEffect(() => {
     const demo = new URLSearchParams(window.location.search).get("demo");
@@ -399,9 +422,16 @@ export default function Dashboard() {
     const orgRaw = localStorage.getItem("fitest_org");
     if (orgRaw) {
       try {
-        const { name, type } = JSON.parse(orgRaw);
-        if (name) setOrgName(name);
-        if (type) setMode(type as DashMode);
+        const org = JSON.parse(orgRaw);
+        if (org.name) setOrgName(org.name);
+        if (org.type) setMode(org.type as DashMode);
+        if (org.clientId) {
+          setClientId(org.clientId);
+          try {
+            const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
+            setLiveResults(all.filter(r => r.clientId === org.clientId));
+          } catch { /* ignore */ }
+        }
       } catch { /* ignore */ }
     }
   }, [navigate]);
@@ -529,6 +559,47 @@ export default function Dashboard() {
             </div>
           </div>
         </motion.div>
+
+        {/* ── Audit link banner ────────────────────────── */}
+        {auditLink && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.4 }}
+            className="bg-card border border-primary/20 rounded-2xl px-5 py-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3"
+          >
+            <div className="flex items-center gap-2.5 shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-primary/15 border border-primary/30 flex items-center justify-center">
+                <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-primary uppercase tracking-widest leading-none mb-0.5">Your Audit Link</p>
+                <p className="text-xs text-muted-foreground">Share this with your {mode === "gym" ? "members" : "team"}</p>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0 bg-background border border-border rounded-xl px-3 py-2 font-mono text-xs text-muted-foreground truncate">
+              {auditLink}
+            </div>
+            <button
+              onClick={handleCopyLink}
+              className={`shrink-0 h-8 px-4 rounded-xl text-xs font-bold border transition-all duration-200 ${
+                linkCopied
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                  : "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
+              }`}
+            >
+              {linkCopied ? (
+                <span className="flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                  </svg>
+                  Copied
+                </span>
+              ) : "Copy Link"}
+            </button>
+          </motion.div>
+        )}
 
         {/* ── Views ────────────────────────────────────── */}
         <AnimatePresence mode="wait">
@@ -712,6 +783,86 @@ export default function Dashboard() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* ── Live Submissions ──────────────────────────── */}
+        {clientId && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.4 }}
+            className="bg-card border border-card-border rounded-2xl p-6 mt-6"
+          >
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">
+                  Live Submissions
+                  <span className="text-muted-foreground/40 normal-case font-normal tracking-normal ml-2">— via your audit link</span>
+                </p>
+              </div>
+              {liveResults.length > 0 && (
+                <span className="text-xs font-bold bg-primary/10 text-primary border border-primary/20 rounded-full px-2.5 py-0.5">
+                  {liveResults.length} {liveResults.length === 1 ? "result" : "results"}
+                </span>
+              )}
+            </div>
+
+            {liveResults.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-muted/50 border border-border flex items-center justify-center">
+                  <svg className="w-5 h-5 text-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-muted-foreground">No submissions yet</p>
+                  <p className="text-xs text-muted-foreground/50 mt-1">Share your audit link above to start collecting results</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Header row */}
+                <div className="hidden md:grid grid-cols-[40px_1fr_140px_110px_160px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+                  <span className="text-xs text-muted-foreground/40 font-semibold">Score</span>
+                  <span className="text-xs text-muted-foreground/40 font-semibold">Company / Department</span>
+                  <span className="text-xs text-muted-foreground/40 font-semibold">Type</span>
+                  <span className="text-xs text-muted-foreground/40 font-semibold">Tier</span>
+                  <span className="text-xs text-muted-foreground/40 font-semibold text-right">Date</span>
+                </div>
+                <div className="space-y-0.5">
+                  {liveResults.map((r, i) => {
+                    const tierKey = r.tier as TierName;
+                    const c = TIER[tierKey] ?? TIER.Performing;
+                    const dt = new Date(r.timestamp);
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.52 + i * 0.04, duration: 0.3 }}
+                        className="grid grid-cols-[40px_1fr_auto] md:grid-cols-[40px_1fr_140px_110px_160px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
+                      >
+                        <div className={`w-9 h-9 rounded-xl ${c.dim} border ${c.border} flex items-center justify-center`}>
+                          <span className={`text-xs font-black ${c.text}`}>{r.score}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold truncate">{r.company}</p>
+                          {r.department && <p className="text-xs text-muted-foreground/60 truncate">{r.department}</p>}
+                        </div>
+                        <span className="hidden md:block text-xs text-muted-foreground capitalize">{r.auditType}</span>
+                        <span className={`hidden md:block text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} w-fit`}>
+                          {r.tier}
+                        </span>
+                        <div className="text-right">
+                          <p className="text-xs text-muted-foreground/60 hidden md:block">{dt.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</p>
+                          <p className="text-xs text-muted-foreground/40 hidden md:block">{dt.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}</p>
+                          <span className={`md:hidden text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border}`}>{r.tier}</span>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </motion.div>
+        )}
 
         {/* ── Footer ───────────────────────────────────── */}
         <motion.p

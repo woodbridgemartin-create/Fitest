@@ -44,7 +44,7 @@ export default function Onboarding() {
   const [typeError, setTypeError] = useState("");
 
   const auditCode = useRef(generateAuditCode());
-  const auditLink = `https://fitest.co.uk/audit/${auditCode.current}`;
+  const auditLink = `https://fitest.co.uk/?client=${auditCode.current}`;
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
@@ -68,7 +68,7 @@ export default function Onboarding() {
   // Save org to localStorage so Dashboard can read it
   useEffect(() => {
     if (step >= 2 && orgName) {
-      localStorage.setItem("fitest_org", JSON.stringify({ name: orgName, type: orgType, departments: departments.filter(Boolean) }));
+      localStorage.setItem("fitest_org", JSON.stringify({ name: orgName, type: orgType, departments: departments.filter(Boolean), clientId: auditCode.current }));
     }
   }, [step, orgName, orgType, departments]);
 
