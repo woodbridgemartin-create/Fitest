@@ -6,57 +6,71 @@ import { Button } from "@/components/ui/button";
 
 const FAQS = [
   {
-    category: "About the Audit",
+    category: "Audit Access",
     items: [
       {
-        q: "What does the Fitest audit measure?",
-        a: "The audit measures human performance across five key domains: mental freshness and focus, sleep quality and recovery, energy stability, physical activity, and stress resilience. Each question is scored on a 1 to 5 scale and the total is mapped to a 0 to 100 performance score.",
+        q: "Who can take the Fitest audit?",
+        a: "The audit is only available to organisations and gyms with an active Fitest licence. It is not publicly accessible.",
       },
       {
-        q: "How long does the audit take?",
-        a: "The audit contains 20 questions and takes between 3 and 4 minutes to complete. It is designed to be fast enough to deploy at scale across a team or membership base without disrupting workflows.",
-      },
-      {
-        q: "Is there a different audit for businesses and gyms?",
-        a: "Yes. The Business audit covers workforce performance: energy, stress, nutrition, burnout and cognitive output. The Gym audit covers member performance: training structure, recovery, conditioning, coaching and physical resilience. Both use the same scoring and tiering framework.",
-      },
-      {
-        q: "What do the four tiers mean?",
-        a: "Critical (0 to 25): immediate intervention needed. Exposed (26 to 50): vulnerability present, key pillars need attention. Performing (51 to 75): solid foundation, optimisation will drive elite output. Elite (76 to 100): exceptional baseline, sustain and refine.",
+        q: "How do users access the audit?",
+        a: "Once a licence is purchased, a private audit link or platform access is provided for internal distribution.",
       },
     ],
   },
   {
-    category: "Data and Privacy",
+    category: "Licensing",
     items: [
       {
-        q: "What happens with my email address?",
-        a: "Your email is used solely to associate your audit report with your results. It is not shared with third parties, sold, or used for unsolicited marketing. You can request deletion of your data at any time by contacting us.",
+        q: "What does a Fitest licence include?",
+        a: "A Fitest licence provides access to the audit system, scoring model, and reporting capability for internal use within your organisation or gym.",
+      },
+      {
+        q: "Is this a subscription?",
+        a: "No. Fitest is sold as an annual licence with no monthly billing.",
+      },
+      {
+        q: "Can I use Fitest commercially?",
+        a: "Yes. All licences include commercial usage rights for internal teams or members.",
+      },
+    ],
+  },
+  {
+    category: "Data & Privacy",
+    items: [
+      {
+        q: "Is employee or member data shared?",
+        a: "No. Individual responses are never shared. Only aggregated data is visible at organisation level.",
       },
       {
         q: "Is the audit anonymous?",
-        a: "The audit can be deployed anonymously (without email capture) or with an email gate for report delivery. For business deployments, administrators can configure either mode depending on their data and compliance requirements.",
+        a: "It can be deployed anonymously or with email capture depending on your use case.",
       },
       {
         q: "How is the score calculated?",
-        a: "Each of the 20 questions is answered on a 1 to 5 scale (Strongly Disagree to Strongly Agree). The total is divided by the maximum possible score (100) and multiplied by 100 to give a percentage. This is then mapped to the nearest tier threshold.",
+        a: "The score is derived from a weighted model across four performance pillars: energy, recovery, nutrition and physical output.",
       },
     ],
   },
   {
-    category: "Licensing and Access",
+    category: "Results & Reporting",
     items: [
       {
-        q: "Is Fitest free to use?",
-        a: "The individual audit is free. Business and gym deployments at scale, including white-label branding, department-level analytics, and team dashboards, are available under a commercial licence. Contact us for pricing.",
+        q: "What do users receive?",
+        a: "Each user receives a score out of 100, a performance tier, and a downloadable report.",
       },
       {
-        q: "Can I white-label the audit for my brand?",
-        a: "Yes. White-label licensing is available for both business and gym deployments. This includes your logo, brand colours and domain. Contact us to discuss your requirements.",
+        q: "Do organisations get insights?",
+        a: "Yes. Organisations can analyse performance trends across departments or membership groups.",
       },
+    ],
+  },
+  {
+    category: "Legal",
+    items: [
       {
-        q: "Can I embed the audit on my own website?",
-        a: "Yes. Embed options are available under the commercial licence. We provide an iframe snippet or API access depending on your technical requirements.",
+        q: "Is this medical advice?",
+        a: "No. Fitest is a performance benchmarking tool and does not provide medical or clinical advice.",
       },
     ],
   },
