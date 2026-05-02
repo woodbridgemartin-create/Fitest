@@ -678,15 +678,6 @@ export default function Home() {
                 </div>
               </section>
 
-              {/* Disclaimer */}
-              <section className="py-10 px-4">
-                <div className="container mx-auto max-w-4xl text-center">
-                  <p className="text-xs text-muted-foreground/50 italic leading-relaxed max-w-2xl mx-auto">
-                    This audit is for informational and educational purposes only and does not constitute medical advice. Always consult a qualified professional.
-                  </p>
-                </div>
-              </section>
-
             </motion.div>
           )}
 

@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { label: "For Gyms", href: "/for-gyms" },
   { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
 ];
 
 export default function Header() {
@@ -17,7 +18,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 max-w-5xl flex items-center justify-between h-16">
+      <div className="w-full px-6 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-0.5 group">
           <span className="text-xl font-black text-primary tracking-tighter">F</span>
           <span className="text-xl font-black tracking-tighter text-foreground">ITEST</span>

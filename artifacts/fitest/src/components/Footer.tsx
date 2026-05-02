@@ -10,80 +10,46 @@ const LEGAL_LINKS = [
 export default function Footer() {
   return (
     <footer className="border-t border-border/50 bg-background mt-auto print:hidden">
-      <div className="container mx-auto px-4 max-w-5xl py-12">
+      <div className="container mx-auto px-6 max-w-5xl py-12 text-center">
 
-        {/* Top row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-0.5 mb-3">
+          <span className="text-lg font-black text-primary tracking-tighter">F</span>
+          <span className="text-lg font-black tracking-tighter text-foreground">ITEST</span>
+        </div>
 
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-0.5 mb-3">
-              <span className="text-lg font-black text-primary tracking-tighter">F</span>
-              <span className="text-lg font-black tracking-tighter text-foreground">ITEST</span>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Performance intelligence for businesses and gyms.
-            </p>
-          </div>
+        <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+          Performance intelligence for businesses and gyms.
+        </p>
 
-          {/* Company info */}
-          <div>
-            <h4 className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">
-              Company
-            </h4>
-            <div className="space-y-1.5 text-xs text-muted-foreground leading-relaxed">
-              <p>Fitest is a trading name of Leadsopedia Limited</p>
-              <p>Company Number: 13145058</p>
-              <p>5 Brayford Square, London, E1 0SG</p>
-            </div>
-          </div>
+        {/* Company info */}
+        <div className="text-xs text-muted-foreground/60 space-y-1 mb-8">
+          <p>Fitest is a trading name of Leadsopedia Limited &nbsp;&middot;&nbsp; Company No. 13145058</p>
+          <p>5 Brayford Square, London, E1 0SG</p>
+          <a href="mailto:hello@fitest.co.uk" className="hover:text-primary transition-colors duration-150">hello@fitest.co.uk</a>
+        </div>
 
-          {/* Contact + nav */}
-          <div>
-            <h4 className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">
-              Contact
-            </h4>
-            <a
-              href="mailto:hello@fitest.co.uk"
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-150 block mb-6"
+        {/* Nav links */}
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-8">
+          {[
+            { label: "For Businesses", href: "/for-businesses" },
+            { label: "For Gyms", href: "/for-gyms" },
+            { label: "FAQ", href: "/faq" },
+            { label: "Contact", href: "/contact" },
+          ].map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-150"
             >
-              hello@fitest.co.uk
-            </a>
-            <h4 className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">
-              Navigate
-            </h4>
-            <div className="flex flex-col gap-1.5">
-              {[
-                { label: "For Businesses", href: "/for-businesses" },
-                { label: "For Gyms", href: "/for-gyms" },
-                { label: "FAQ", href: "/faq" },
-                { label: "Contact", href: "/contact" },
-              ].map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-150"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
+              {link.label}
+            </Link>
+          ))}
         </div>
 
-        {/* Disclaimer */}
-        <div className="border-t border-border/40 pt-8 mb-6">
-          <p className="text-xs text-muted-foreground/70 italic whitespace-nowrap overflow-hidden text-ellipsis">
-            This audit is for informational and educational purposes only and does not constitute medical advice. Always consult a qualified professional.
-          </p>
-        </div>
-
-        {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground/50">
-            &copy; {new Date().getFullYear()} Leadsopedia Limited. All rights reserved.
-          </p>
-          <div className="flex flex-wrap gap-4">
+        {/* Divider */}
+        <div className="border-t border-border/40 pt-6 mt-2">
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 mb-4">
             {LEGAL_LINKS.map((link) => (
               <Link
                 key={link.href}
@@ -94,6 +60,9 @@ export default function Footer() {
               </Link>
             ))}
           </div>
+          <p className="text-xs text-muted-foreground/40">
+            &copy; {new Date().getFullYear()} Leadsopedia Limited. All rights reserved.
+          </p>
         </div>
 
       </div>
