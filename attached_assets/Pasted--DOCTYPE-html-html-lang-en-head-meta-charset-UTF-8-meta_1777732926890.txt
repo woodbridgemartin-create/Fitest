@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fitest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: #0B0F19;
+      font-family: Inter, sans-serif;
+    }
+  </style>
+</head>
+
+<body class="text-white">
+
+<!-- NAV -->
+<header class="flex justify-between items-center px-8 py-4 border-b border-gray-800">
+  <div class="flex items-center gap-2 text-xl font-bold">
+    <span class="text-lime-400">F</span> FITEST
+  </div>
+  <nav class="space-x-6 text-gray-300">
+    <a href="#">Home</a>
+    <a href="#">Businesses</a>
+    <a href="#">Gyms</a>
+    <a href="#">FAQ</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="text-center py-24 px-6">
+  <h1 class="text-5xl font-bold leading-tight">
+    Benchmark Your Team’s Performance
+  </h1>
+  <p class="mt-6 text-gray-400 max-w-xl mx-auto">
+    Score energy, recovery, stress and output in under 4 minutes. Identify where performance is breaking down.
+  </p>
+
+  <button onclick="startAudit()" class="mt-8 bg-lime-400 text-black px-6 py-3 rounded-lg font-semibold hover:bg-lime-300">
+    Start Audit
+  </button>
+</section>
+
+<!-- TIERS -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-6 px-8 py-16">
+  <div class="bg-gray-900 p-6 rounded-lg text-center">
+    <h3 class="text-red-400 font-bold">Critical</h3>
+    <p class="text-sm mt-2">0 to 25</p>
+  </div>
+  <div class="bg-gray-900 p-6 rounded-lg text-center">
+    <h3 class="text-yellow-400 font-bold">Exposed</h3>
+    <p class="text-sm mt-2">26 to 50</p>
+  </div>
+  <div class="bg-gray-900 p-6 rounded-lg text-center">
+    <h3 class="text-lime-400 font-bold">Performing</h3>
+    <p class="text-sm mt-2">51 to 75</p>
+  </div>
+  <div class="bg-gray-900 p-6 rounded-lg text-center">
+    <h3 class="text-green-500 font-bold">Elite</h3>
+    <p class="text-sm mt-2">76 to 100</p>
+  </div>
+</section>
+
+<!-- AUDIT -->
+<section id="audit" class="hidden px-8 py-16 max-w-xl mx-auto">
+  <h2 class="text-2xl font-bold mb-6">Audit</h2>
+
+  <div id="questions"></div>
+
+  <button onclick="submitAudit()" class="mt-8 bg-lime-400 text-black px-6 py-3 rounded-lg font-semibold">
+    Get Score
+  </button>
+</section>
+
+<!-- RESULT -->
+<section id="result" class="hidden text-center py-24">
+  <h2 class="text-xl text-gray-400">Your Score</h2>
+  <div id="score" class="text-6xl font-bold mt-4"></div>
+  <div id="tier" class="mt-4 text-2xl font-semibold"></div>
+
+  <button onclick="location.reload()" class="mt-8 text-gray-400 underline">
+    Retake
+  </button>
+</section>
+
+<script>
+const questions = [
+  "I feel mentally fresh at the start of most days",
+  "I sleep well consistently",
+  "My energy is stable throughout the day",
+  "I exercise regularly",
+  "My stress is manageable",
+];
+
+let answers = [];
+
+function startAudit() {
+  document.getElementById("audit").classList.remove("hidden");
+  window.scrollTo(0, document.body.scrollHeight);
+  renderQuestions();
+}
+
+function renderQuestions() {
+  const container = document.getElementById("questions");
+  container.innerHTML = "";
+
+  questions.forEach((q, i) => {
+    const div = document.createElement("div");
+    div.className = "mb-6";
+
+    div.innerHTML = `
+      <p class="mb-2">${q}</p>
+      <input type="range" min="1" max="5" value="3" 
+        onchange="answers[${i}] = this.value"
+        class="w-full">
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+function submitAudit() {
+  let total = answers.reduce((a, b) => a + Number(b || 3), 0);
+  let score = Math.round((total / (questions.length * 5)) * 100);
+
+  let tier = "";
+  let color = "";
+
+  if (score <= 25) {
+    tier = "Critical";
+    color = "text-red-400";
+  } else if (score <= 50) {
+    tier = "Exposed";
+    color = "text-yellow-400";
+  } else if (score <= 75) {
+    tier = "Performing";
+    color = "text-lime-400";
+  } else {
+    tier = "Elite";
+    color = "text-green-400";
+  }
+
+  document.getElementById("score").innerText = score + "/100";
+  document.getElementById("tier").innerText = tier;
+  document.getElementById("tier").className = color + " text-2xl font-bold mt-4";
+
+  document.getElementById("audit").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
