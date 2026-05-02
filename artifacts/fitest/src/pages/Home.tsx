@@ -245,6 +245,13 @@ export default function Home() {
     const p = new URLSearchParams(window.location.search);
     const c = p.get("client");
     if (c) setClientId(c);
+    const audit = p.get("audit") as AuditPath | null;
+    if (audit === "business" || audit === "gym") {
+      setAuditPath(audit);
+      setConsentMedical(false);
+      setConsentPrivacy(false);
+      setPhase("consent");
+    }
   }, []);
 
   const questions = auditPath === "gym" ? GYM_QUESTIONS : BUSINESS_QUESTIONS;
