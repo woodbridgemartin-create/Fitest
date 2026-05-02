@@ -37,12 +37,12 @@ const HOW_IT_WORKS = [
 ];
 
 const FEATURES = [
-  "20-question validated performance audit",
+  "20 question validated performance audit",
   "Tiered scoring: Critical, Exposed, Performing, Elite",
   "Downloadable PDF report per respondent",
-  "Department-level breakdown and benchmarking",
-  "Anonymous or email-gated deployment",
-  "Branded white-label version available",
+  "Department breakdown and benchmarking",
+  "Anonymous or email gated deployment",
+  "Branded white label version available",
 ];
 
 export default function ForBusinesses() {
@@ -65,7 +65,7 @@ export default function ForBusinesses() {
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-10">
               Fitest gives HR leaders and managers a fast, evidence-informed view of workforce
-              readiness: energy, recovery, stress, and output — scored and tiered in under 4 minutes.
+              readiness: energy, recovery, stress, and output. Scored and tiered in under 4 minutes.
             </p>
             <Link href="/demo">
               <Button
@@ -138,8 +138,7 @@ export default function ForBusinesses() {
                 Everything you need to measure and act
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-8">
-                Fitest is not a wellness survey. It is a performance intelligence platform —
-                built to surface where human performance is breaking down before it costs you.
+                Fitest is not a wellness survey. It is a performance intelligence platform built to surface where human performance is breaking down before it costs you.
               </p>
               <Link href="/demo">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
