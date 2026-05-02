@@ -592,13 +592,9 @@ export default function Home() {
 
                           {/* Badge row */}
                           <div className="flex items-center justify-between mb-6">
-                            <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 border ${
-                              popular
-                                ? "bg-primary/10 border-primary/20"
-                                : "bg-muted/60 border-border"
-                            }`}>
-                              <div className={`w-1.5 h-1.5 rounded-full ${popular ? "bg-primary" : "bg-muted-foreground"}`} />
-                              <span className={`text-xs font-bold uppercase tracking-widest ${popular ? "text-primary" : "text-muted-foreground"}`}>
+                            <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 border bg-primary/10 border-primary/20">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                              <span className="text-xs font-bold uppercase tracking-widest text-primary">
                                 {label}
                               </span>
                             </div>
