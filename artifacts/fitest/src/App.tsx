@@ -15,19 +15,21 @@ import GDPR from "@/pages/GDPR";
 import MedicalDisclaimer from "@/pages/MedicalDisclaimer";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
+import Demo from "@/pages/Demo";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
 function Router() {
   const [location] = useLocation();
-  const isStandalone = location === "/login" || location === "/dashboard";
+  const isStandalone = location === "/login" || location === "/dashboard" || location === "/demo";
 
   if (isStandalone) {
     return (
       <Switch>
         <Route path="/login" component={Login} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route path="/demo" component={Demo} />
       </Switch>
     );
   }

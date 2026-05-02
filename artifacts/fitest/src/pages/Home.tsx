@@ -351,7 +351,7 @@ export default function Home() {
                       Fitest gives organisations and gyms a structured way to measure energy, recovery, stress and output — scored and tiered in under 4 minutes.
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center">
-                      <Link href="/contact">
+                      <Link href="/demo">
                         <Button size="lg" className="h-13 px-8 font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
                           Request Demo
                         </Button>
