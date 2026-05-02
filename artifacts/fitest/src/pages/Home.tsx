@@ -210,9 +210,9 @@ const RATING_LABELS: Record<number, string> = {
 };
 
 const HOW_IT_WORKS = [
-  { step: "01", title: "Select Your Audit", body: "Choose the Business audit for workforce performance or the Gym audit for member performance. Each is tailored to its context." },
-  { step: "02", title: "Answer 20 Questions", body: "Rate each statement on a scale of 1 to 5. The audit covers energy, recovery, stress, nutrition and physical output." },
-  { step: "03", title: "Get Your Score", body: "Receive a validated score from 0 to 100 mapped to one of four tiers: Critical, Exposed, Performing or Elite. Download your report." },
+  { step: "01", title: "Purchase Licence", body: "Select the Business or Gym licence. You receive immediate access to the audit platform and deployment materials for internal distribution." },
+  { step: "02", title: "Deploy Audit Internally", body: "Share a private audit link with your team or members. The 20-question audit takes under 4 minutes and requires no account creation." },
+  { step: "03", title: "Receive Tiered Performance Data", body: "Each participant receives a score from 0 to 100 and a performance tier. Organisations access aggregated insights across departments or membership groups." },
 ];
 
 const PILLARS = [
@@ -336,44 +336,73 @@ export default function Home() {
             <motion.div key="landing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}>
 
               {/* Hero */}
-              <section className="text-center py-24 px-4 border-b border-border/30">
-                <div className="container mx-auto max-w-4xl">
+              <section className="text-center py-28 px-4 border-b border-border/30 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+                <div className="container mx-auto max-w-3xl relative">
                   <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                    <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-6 uppercase">
-                      <span className="text-primary">F</span>ITEST
+                    <div className="inline-flex items-center gap-2 bg-card border border-card-border rounded-full px-4 py-1.5 mb-8">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Licensed Performance System</span>
+                    </div>
+                    <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-6 leading-tight">
+                      Deploy a Performance System<br className="hidden md:block" /> Across Your Team
                     </h1>
-                    <p className="text-xl md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto mb-3">
-                      Benchmark Your Performance
-                    </p>
-                    <p className="text-sm text-muted-foreground uppercase tracking-widest font-semibold opacity-70 mb-10">
-                      Score your readiness in under 4 minutes
+                    <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+                      Fitest gives organisations and gyms a structured way to measure energy, recovery, stress and output — scored and tiered in under 4 minutes.
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center">
-                      <Button onClick={() => handleSelectAudit("business")} size="lg" className="h-13 px-8 font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
-                        Business Audit
-                      </Button>
-                      <Button onClick={() => handleSelectAudit("gym")} size="lg" variant="outline" className="h-13 px-8 font-bold rounded-full border-border hover:bg-muted">
-                        Gym Audit
-                      </Button>
+                      <Link href="/contact">
+                        <Button size="lg" className="h-13 px-8 font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+                          Request Demo
+                        </Button>
+                      </Link>
+                      <a href="#pricing">
+                        <Button size="lg" variant="outline" className="h-13 px-8 font-bold rounded-full border-border hover:bg-muted">
+                          Get Licence
+                        </Button>
+                      </a>
                     </div>
                   </motion.div>
                 </div>
               </section>
 
-              {/* What is Fitest */}
+              {/* Problem */}
               <section className="py-20 px-4 border-b border-border/30">
                 <div className="container mx-auto max-w-4xl">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div>
-                      <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-4">What is Fitest?</p>
-                      <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">Performance intelligence. In 4 minutes.</h2>
-                      <p className="text-muted-foreground leading-relaxed mb-4">
-                        Fitest is a structured performance benchmarking platform that gives individuals, businesses and gyms a fast, validated score across four key pillars: energy, recovery, nutrition and physical output.
-                      </p>
+                      <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-4">The Problem</p>
+                      <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">The performance gap is invisible until it costs you</h2>
                       <p className="text-muted-foreground leading-relaxed">
-                        Most organisations have no objective way to measure human performance before it deteriorates. Fitest changes that. Answer 20 targeted questions and receive a score from 0 to 100, mapped to one of four performance tiers.
+                        Most organisations have no structured, objective way to measure human performance. By the time problems surface — through absence, churn, or burnout — the cost is already significant.
                       </p>
                     </div>
+                    <div className="space-y-4">
+                      {[
+                        { icon: "M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z", label: "Burnout goes undetected" },
+                        { icon: "M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9", label: "Member churn happens without warning" },
+                        { icon: "M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z", label: "No objective measurement of human performance" },
+                      ].map(({ icon, label }, i) => (
+                        <motion.div key={label} initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+                          <div className="flex items-center gap-4 p-4 bg-card border border-card-border rounded-xl">
+                            <div className="w-9 h-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
+                              <svg className="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
+                              </svg>
+                            </div>
+                            <span className="text-sm font-medium">{label}</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Solution */}
+              <section className="py-20 px-4 border-b border-border/30">
+                <div className="container mx-auto max-w-4xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className="grid grid-cols-2 gap-4">
                       {PILLARS.map((p, i) => (
                         <motion.div key={i} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}>
@@ -386,6 +415,16 @@ export default function Home() {
                           </Card>
                         </motion.div>
                       ))}
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-4">The Solution</p>
+                      <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">A system, not a survey</h2>
+                      <p className="text-muted-foreground leading-relaxed mb-4">
+                        Fitest is a structured performance audit system deployed across teams or memberships, generating measurable insight and tiered scoring across four pillars: energy, recovery, nutrition and physical output.
+                      </p>
+                      <p className="text-muted-foreground leading-relaxed">
+                        Every participant receives a validated score from 0 to 100, mapped to one of four tiers. Organisations see aggregated performance data — across departments or membership groups — in a single view.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -418,8 +457,8 @@ export default function Home() {
               <section className="py-20 px-4 border-b border-border/30">
                 <div className="container mx-auto max-w-4xl">
                   <div className="text-center mb-12">
-                    <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">The process</p>
-                    <h2 className="text-2xl md:text-3xl font-black">Three steps to your score</h2>
+                    <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">How it works</p>
+                    <h2 className="text-2xl md:text-3xl font-black">From licence to insight in three steps</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {HOW_IT_WORKS.map((step, i) => (
@@ -437,8 +476,8 @@ export default function Home() {
               <section className="py-20 px-4 border-b border-border/30">
                 <div className="container mx-auto max-w-4xl">
                   <div className="text-center mb-12">
-                    <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">Built for two audiences</p>
-                    <h2 className="text-2xl md:text-3xl font-black">Start your audit</h2>
+                    <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">Access the Platform</p>
+                    <h2 className="text-2xl md:text-3xl font-black">Built for two licence types</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[
@@ -446,16 +485,16 @@ export default function Home() {
                         path: "business" as AuditPath,
                         letter: "B",
                         title: "For Businesses",
-                        desc: "Workforce performance audit. 20 questions covering energy, recovery, stress, nutrition and cognitive output. Ideal for HR leaders, managers and wellbeing programmes.",
-                        cta: "Start Business Audit",
+                        desc: "Workforce performance audit system. 20 questions covering energy, recovery, stress, nutrition and cognitive output. Designed for HR leaders, managers and wellbeing programmes.",
+                        cta: "Deploy Audit",
                         page: "/for-businesses",
                       },
                       {
                         path: "gym" as AuditPath,
                         letter: "G",
                         title: "For Gyms",
-                        desc: "Member performance audit. 20 questions covering training structure, recovery, nutrition, conditioning and physical resilience. Ideal for gym owners and coaches.",
-                        cta: "Start Gym Audit",
+                        desc: "Member performance audit system. 20 questions covering training structure, recovery, nutrition, conditioning and physical resilience. Designed for gym owners and coaches.",
+                        cta: "Access Platform",
                         page: "/for-gyms",
                       },
                     ].map(({ path, letter, title, desc, cta, page }) => (
@@ -482,14 +521,14 @@ export default function Home() {
               </section>
 
               {/* Pricing */}
-              <section className="py-24 px-4 border-b border-border/30 relative overflow-hidden">
+              <section id="pricing" className="py-24 px-4 border-b border-border/30 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
                 <div className="container mx-auto max-w-4xl relative">
                   <div className="text-center mb-14">
-                    <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-3">Commercial licences</p>
-                    <h2 className="text-3xl md:text-4xl font-black mb-4">Deploy Fitest at scale</h2>
+                    <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-3">Licensing</p>
+                    <h2 className="text-3xl md:text-4xl font-black mb-4">Annual licences. No monthly billing.</h2>
                     <p className="text-muted-foreground text-sm max-w-xl mx-auto leading-relaxed">
-                      The free audit is for individual use. Organisations and gyms that want team-level benchmarking, department insights and aggregated reporting need a commercial licence.
+                      Each licence includes full access to the audit system, scoring model, and reporting capability. Deployed internally across your organisation or gym.
                     </p>
                   </div>
 
