@@ -369,7 +369,7 @@ export default function Home() {
                       Deploy a Performance System<br className="hidden md:block" /> Across Your Team
                     </h1>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-                      Fitest gives organisations and gyms a structured way to measure energy, recovery, stress and output — scored and tiered in under 4 minutes.
+                      Fitest gives organisations and gyms a structured way to measure energy, recovery, stress and output. Scored and tiered in under 4 minutes.
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center">
                       <Link href="/demo">
@@ -395,7 +395,7 @@ export default function Home() {
                       <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-4">The Problem</p>
                       <h2 className="text-3xl md:text-4xl font-black mb-6 leading-tight">The performance gap is invisible until it costs you</h2>
                       <p className="text-muted-foreground leading-relaxed">
-                        Most organisations have no structured, objective way to measure human performance. By the time problems surface — through absence, churn, or burnout — the cost is already significant.
+                        Most organisations have no structured, objective way to measure human performance. By the time problems surface through absence, churn, or burnout, the cost is already significant.
                       </p>
                     </div>
                     <div className="space-y-4">
@@ -444,7 +444,7 @@ export default function Home() {
                         Fitest is a structured performance audit system deployed across teams or memberships, generating measurable insight and tiered scoring across four pillars: energy, recovery, nutrition and physical output.
                       </p>
                       <p className="text-muted-foreground leading-relaxed">
-                        Every participant receives a validated score from 0 to 100, mapped to one of four tiers. Organisations see aggregated performance data — across departments or membership groups — in a single view.
+                        Every participant receives a validated score from 0 to 100, mapped to one of four tiers. Organisations see aggregated performance data across departments or membership groups in a single view.
                       </p>
                     </div>
                   </div>

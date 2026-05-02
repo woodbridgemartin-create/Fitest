@@ -65,7 +65,7 @@ export default function ForGyms() {
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-10">
               Fitest gives gym owners and coaches a fast, structured view of member readiness:
-              training quality, recovery, nutrition and resilience — scored and tiered in under 4 minutes.
+              training quality, recovery, nutrition and resilience. Scored and tiered in under 4 minutes.
             </p>
             <Link href="/demo">
               <Button
@@ -138,8 +138,8 @@ export default function ForGyms() {
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-8">
                 Stop guessing where members are struggling. Fitest gives you a structured
-                baseline on day one, so every coaching conversation is grounded in real data
-                — not assumptions.
+                baseline on day one, so every coaching conversation is grounded in real data,
+                not assumptions.
               </p>
               <Link href="/demo">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">

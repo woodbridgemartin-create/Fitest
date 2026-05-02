@@ -329,7 +329,7 @@ function RecentActivity({ bizSubs, gymSubs, mode }: {
         className="bg-card border border-card-border rounded-2xl p-6 mt-6"
       >
         <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">
-          Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">— last 10 submissions</span>
+          Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">· last 10 submissions</span>
         </p>
         <div className="hidden md:grid grid-cols-[90px_1fr_110px_130px_90px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
           <span className="text-xs text-muted-foreground/40 font-semibold">Entry ID</span>
@@ -833,7 +833,7 @@ export default function Dashboard() {
               <div>
                 <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">
                   Live Submissions
-                  <span className="text-muted-foreground/40 normal-case font-normal tracking-normal ml-2">— via your audit link</span>
+                  <span className="text-muted-foreground/40 normal-case font-normal tracking-normal ml-2">· via your audit link</span>
                 </p>
               </div>
               {liveResults.length > 0 && (
