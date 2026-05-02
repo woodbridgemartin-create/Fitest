@@ -227,19 +227,29 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [resultScore, setResultScore] = useState<number | null>(null);
+  const [consentMedical, setConsentMedical] = useState(false);
+  const [consentPrivacy, setConsentPrivacy] = useState(false);
 
   const topRef = useRef<HTMLDivElement>(null);
+  const consentRef = useRef<HTMLDivElement>(null);
   const auditRef = useRef<HTMLDivElement>(null);
 
   const questions = auditPath === "gym" ? GYM_QUESTIONS : BUSINESS_QUESTIONS;
   const auditLabel = auditPath === "gym" ? "Member Performance Audit" : "Workforce Performance Audit";
 
-  const handleStartAudit = (path: AuditPath) => {
+  const handleSelectAudit = (path: AuditPath) => {
     setAuditPath(path);
+    setConsentMedical(false);
+    setConsentPrivacy(false);
+    setPhase("consent");
+    setTimeout(() => consentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+  };
+
+  const handleBeginAudit = () => {
     setPhase("audit");
     setCurrentQ(0);
     setDirection(1);
-    setAnswers(Array(path === "gym" ? GYM_QUESTIONS.length : BUSINESS_QUESTIONS.length).fill(null));
+    setAnswers(Array(auditPath === "gym" ? GYM_QUESTIONS.length : BUSINESS_QUESTIONS.length).fill(null));
     setTimeout(() => auditRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
   };
 
