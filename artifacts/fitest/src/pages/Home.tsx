@@ -459,6 +459,104 @@ export default function Home() {
                 </div>
               </section>
 
+              {/* Pricing */}
+              <section className="py-24 px-4 border-b border-border/30 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+                <div className="container mx-auto max-w-4xl relative">
+                  <div className="text-center mb-14">
+                    <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-3">Commercial licences</p>
+                    <h2 className="text-3xl md:text-4xl font-black mb-4">Deploy Fitest at scale</h2>
+                    <p className="text-muted-foreground text-sm max-w-xl mx-auto leading-relaxed">
+                      The free audit is for individual use. Organisations and gyms that want team-level benchmarking, department insights and aggregated reporting need a commercial licence.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Business licence */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45 }}>
+                      <div className="relative bg-card border border-primary/30 rounded-2xl p-8 h-full flex flex-col shadow-lg shadow-primary/5">
+                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent rounded-t-2xl" />
+                        <div className="mb-6">
+                          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                            <span className="text-xs font-bold text-primary uppercase tracking-widest">Business</span>
+                          </div>
+                          <div className="flex items-baseline gap-1 mb-1">
+                            <span className="text-5xl font-black tracking-tight">£249</span>
+                            <span className="text-muted-foreground text-sm font-medium">/ year</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-wider">Business Licence</p>
+                        </div>
+
+                        <ul className="space-y-3 mb-8 flex-1">
+                          {[
+                            "Workforce performance audit",
+                            "Department insights",
+                            "Aggregated reporting",
+                          ].map((item) => (
+                            <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
+                              <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+
+                        <a href="mailto:hello@fitest.co.uk?subject=Business%20Licence%20Enquiry">
+                          <Button size="lg" className="w-full h-13 font-bold text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-xl">
+                            Purchase Business Licence
+                          </Button>
+                        </a>
+                      </div>
+                    </motion.div>
+
+                    {/* Gym licence */}
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.1 }}>
+                      <div className="relative bg-card border border-card-border rounded-2xl p-8 h-full flex flex-col hover:border-primary/20 transition-colors duration-300">
+                        <div className="mb-6">
+                          <div className="inline-flex items-center gap-2 bg-muted border border-border rounded-full px-3 py-1 mb-4">
+                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
+                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Gym</span>
+                          </div>
+                          <div className="flex items-baseline gap-1 mb-1">
+                            <span className="text-5xl font-black tracking-tight">£149</span>
+                            <span className="text-muted-foreground text-sm font-medium">/ year</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-wider">Gym Licence</p>
+                        </div>
+
+                        <ul className="space-y-3 mb-8 flex-1">
+                          {[
+                            "Member performance audit",
+                            "Coaching insights",
+                            "Retention tracking",
+                          ].map((item) => (
+                            <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
+                              <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+
+                        <a href="mailto:hello@fitest.co.uk?subject=Gym%20Licence%20Enquiry">
+                          <Button size="lg" variant="outline" className="w-full h-13 font-bold text-base border-border hover:border-primary/40 hover:bg-muted/60 rounded-xl transition-colors duration-200">
+                            Purchase Gym Licence
+                          </Button>
+                        </a>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  <p className="text-center text-xs text-muted-foreground/40 mt-8">
+                    All licences include a commercial use agreement. To discuss volume pricing or custom deployments, email{" "}
+                    <a href="mailto:hello@fitest.co.uk" className="text-muted-foreground/60 hover:text-primary transition-colors">hello@fitest.co.uk</a>.
+                  </p>
+                </div>
+              </section>
+
               {/* Disclaimer */}
               <section className="py-10 px-4">
                 <div className="container mx-auto max-w-4xl text-center">
