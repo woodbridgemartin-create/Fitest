@@ -132,7 +132,7 @@ function DonutRing({ pct, color, size = 88 }: { pct: number; color: string; size
 }
 
 /* ─── Risk indicator ─────────────────────────────────── */
-function RiskIndicator({ tiers, total }: { tiers: typeof BIZ_TIERS; total: number }) {
+function RiskIndicator({ tiers, total, mode = "business" }: { tiers: typeof BIZ_TIERS; total: number; mode?: "business" | "gym" }) {
   const atRisk = tiers.filter((t) => t.tier === "Critical" || t.tier === "Exposed").reduce((s, t) => s + t.count, 0);
   const pct = Math.round((atRisk / total) * 100);
   const level = pct >= 40 ? "High" : pct >= 20 ? "Moderate" : "Low";
@@ -169,7 +169,7 @@ function RiskIndicator({ tiers, total }: { tiers: typeof BIZ_TIERS; total: numbe
             {atRisk} {atRisk === 1 ? "person" : "people"} at risk
           </h3>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
-            <span className={`font-bold ${levelColor}`}>{pct}%</span> of your workforce sits in the{" "}
+            <span className={`font-bold ${levelColor}`}>{pct}%</span> of your {mode === "gym" ? "gym members" : "workforce"} sits in the{" "}
             <span className="text-red-400 font-semibold">Critical</span> or{" "}
             <span className="text-amber-400 font-semibold">Exposed</span> tiers. These individuals are at elevated risk of
             performance deterioration, absence or burnout without structured intervention.
@@ -399,7 +399,7 @@ export default function Dashboard() {
             <motion.div key="gym" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
 
               {/* Risk indicator */}
-              <RiskIndicator tiers={GYM_TIERS} total={gymTotal} />
+              <RiskIndicator tiers={GYM_TIERS} total={gymTotal} mode="gym" />
 
               {/* Stat tiles */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
