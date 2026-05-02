@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,11 +13,25 @@ import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import GDPR from "@/pages/GDPR";
 import MedicalDisclaimer from "@/pages/MedicalDisclaimer";
+import Login from "@/pages/Login";
+import Dashboard from "@/pages/Dashboard";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
 function Router() {
+  const [location] = useLocation();
+  const isStandalone = location === "/login" || location === "/dashboard";
+
+  if (isStandalone) {
+    return (
+      <Switch>
+        <Route path="/login" component={Login} />
+        <Route path="/dashboard" component={Dashboard} />
+      </Switch>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
