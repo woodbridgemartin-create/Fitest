@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 type UseCase = "business" | "gym" | "";
 type Phase = "form" | "confirmation";
 
+const FORMSPREE = "https://formspree.io/f/maqvqwrb";
+
 const TEAM_SIZES = ["1 – 10", "11 – 50", "51 – 200", "201 – 500", "500+"];
 
 const STRIPE = {
@@ -25,6 +27,7 @@ export default function Demo() {
   const [useCase, setUseCase] = useState<UseCase>("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   function validate() {
     const e: Record<string, string> = {};
@@ -37,15 +40,35 @@ export default function Demo() {
     return e;
   }
 
-  function handleSubmit(ev: React.FormEvent) {
+  async function handleSubmit(ev: React.FormEvent) {
     ev.preventDefault();
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     setSubmitting(true);
-    setTimeout(() => {
+    setSubmitError("");
+    try {
+      const res = await fetch(FORMSPREE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          company,
+          team_size: teamSize,
+          use_case: useCase,
+          _subject: `Fitest demo request from ${name} — ${company}`,
+        }),
+      });
+      if (res.ok) {
+        setPhase("confirmation");
+      } else {
+        setSubmitError("Something went wrong. Please email us at hello@fitest.co.uk.");
+      }
+    } catch {
+      setSubmitError("Could not send request. Please email us at hello@fitest.co.uk.");
+    } finally {
       setSubmitting(false);
-      setPhase("confirmation");
-    }, 700);
+    }
   }
 
   function field(id: string) {
@@ -231,6 +254,12 @@ export default function Demo() {
                     </div>
                     {errors.useCase && <p className="text-xs text-red-400 mt-1">{errors.useCase}</p>}
                   </div>
+
+                  {submitError && (
+                    <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                      {submitError}
+                    </p>
+                  )}
 
                   <Button
                     type="submit"

@@ -4,8 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+const FORMSPREE = "https://formspree.io/f/maqvqwrb";
+
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -23,14 +27,34 @@ export default function Contact() {
     return e;
   };
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     const e = validate();
-    if (Object.keys(e).length > 0) {
-      setErrors(e);
-      return;
+    if (Object.keys(e).length > 0) { setErrors(e); return; }
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch(FORMSPREE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          company: form.company || undefined,
+          message: form.message,
+          _subject: `Fitest contact from ${form.name}`,
+        }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setSubmitError("Something went wrong. Please email us at hello@fitest.co.uk.");
+      }
+    } catch {
+      setSubmitError("Could not send message. Please email us at hello@fitest.co.uk.");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitted(true);
   };
 
   const handleChange = (field: string, value: string) => {
@@ -136,12 +160,18 @@ export default function Contact() {
                 )}
               </div>
 
+              {submitError && (
+                <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                  {submitError}
+                </p>
+              )}
               <Button
                 type="submit"
                 size="lg"
-                className="w-full h-12 font-bold bg-primary text-primary-foreground hover:bg-primary/90"
+                disabled={submitting}
+                className="w-full h-12 font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
               >
-                Send Message
+                {submitting ? "Sending…" : "Send Message"}
               </Button>
             </form>
           </motion.div>
