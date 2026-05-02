@@ -73,9 +73,8 @@ export default function Footer() {
 
         {/* Disclaimer */}
         <div className="border-t border-border/40 pt-8 mb-6">
-          <p className="text-xs text-muted-foreground/70 leading-relaxed italic max-w-2xl">
-            This audit is for informational and educational purposes only and does not constitute
-            medical advice. Always consult a qualified professional.
+          <p className="text-xs text-muted-foreground/70 italic whitespace-nowrap overflow-hidden text-ellipsis">
+            This audit is for informational and educational purposes only and does not constitute medical advice. Always consult a qualified professional.
           </p>
         </div>
 

@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/auditData";
 import type { AuditPath } from "@/lib/auditData";
 
-type Phase = "landing" | "audit" | "email" | "result";
+type Phase = "landing" | "consent" | "audit" | "email" | "result";
 
 function AnimatedCounter({ value }: { value: number }) {
   const [display, setDisplay] = useState(0);
