@@ -525,7 +525,7 @@ export default function Home() {
                           ))}
                         </ul>
 
-                        <a href="mailto:hello@fitest.co.uk?subject=Business%20Licence%20Enquiry">
+                        <a href="https://buy.stripe.com/8x29ASdLL99z3ycbMX6AM05" target="_blank" rel="noopener noreferrer">
                           <Button size="lg" className="w-full h-13 font-bold text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-xl">
                             Purchase Business Licence
                           </Button>
@@ -563,7 +563,7 @@ export default function Home() {
                           ))}
                         </ul>
 
-                        <a href="mailto:hello@fitest.co.uk?subject=Gym%20Licence%20Enquiry">
+                        <a href="https://buy.stripe.com/fZudR89vvdpP9WA9EP6AM06" target="_blank" rel="noopener noreferrer">
                           <Button size="lg" variant="outline" className="w-full h-13 font-bold text-base border-border hover:border-primary/40 hover:bg-muted/60 rounded-xl transition-colors duration-200">
                             Purchase Gym Licence
                           </Button>
