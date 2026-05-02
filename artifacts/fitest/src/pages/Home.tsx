@@ -327,10 +327,10 @@ export default function Home() {
                       Score your readiness in under 4 minutes
                     </p>
                     <div className="flex flex-wrap gap-4 justify-center">
-                      <Button onClick={() => handleStartAudit("business")} size="lg" className="h-13 px-8 font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Button onClick={() => handleSelectAudit("business")} size="lg" className="h-13 px-8 font-bold rounded-full bg-primary text-primary-foreground hover:bg-primary/90">
                         Business Audit
                       </Button>
-                      <Button onClick={() => handleStartAudit("gym")} size="lg" variant="outline" className="h-13 px-8 font-bold rounded-full border-border hover:bg-muted">
+                      <Button onClick={() => handleSelectAudit("gym")} size="lg" variant="outline" className="h-13 px-8 font-bold rounded-full border-border hover:bg-muted">
                         Gym Audit
                       </Button>
                     </div>
@@ -443,7 +443,7 @@ export default function Home() {
                           <h3 className="text-xl font-bold mb-2">{title}</h3>
                           <p className="text-sm text-muted-foreground leading-relaxed mb-6">{desc}</p>
                           <div className="flex gap-3">
-                            <Button onClick={() => handleStartAudit(path)} className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
+                            <Button onClick={() => handleSelectAudit(path)} className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
                               {cta}
                             </Button>
                             <Link href={page}>
@@ -468,6 +468,102 @@ export default function Home() {
                 </div>
               </section>
 
+            </motion.div>
+          )}
+
+          {/* ── CONSENT SCREEN ── */}
+          {phase === "consent" && (
+            <motion.div key="consent" ref={consentRef} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="min-h-screen flex items-start justify-center px-4 py-16">
+              <div className="max-w-lg w-full space-y-6">
+
+                <div>
+                  <p className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-2">
+                    {auditPath === "gym" ? "Member Performance Audit" : "Workforce Performance Audit"}
+                  </p>
+                  <h2 className="text-2xl font-black mb-1">Before you begin</h2>
+                  <p className="text-sm text-muted-foreground">Please read and agree to the following before starting your audit.</p>
+                </div>
+
+                {/* Medical disclaimer box */}
+                <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">Medical Disclaimer</p>
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-2">
+                    This audit is <strong>not medical advice</strong>. It is a self-assessment tool for informational and educational purposes only. It does not diagnose, treat or prevent any condition.
+                  </p>
+                  <p className="text-sm text-foreground/80 leading-relaxed mb-2">
+                    Do not rely on your score as a substitute for professional medical, nutritional or fitness advice. If you have any existing health condition or concern, consult a qualified healthcare professional before acting on your results.
+                  </p>
+                  <p className="text-sm text-foreground/80 leading-relaxed">
+                    If you are experiencing a medical emergency, call 999 (UK) or your local emergency services immediately.
+                  </p>
+                </div>
+
+                {/* Privacy box */}
+                <div className="bg-card border border-card-border rounded-xl p-5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Your Privacy</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                    Your email address and audit responses are collected by Leadsopedia Limited (trading as Fitest), Company No. 13145058, solely to generate your personal performance report.
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                    We do not sell your data. We retain it for up to 24 months. You can request deletion at any time by emailing <span className="text-foreground">hello@fitest.co.uk</span>.
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    For full details see our{" "}
+                    <Link href="/privacy-policy" className="text-primary underline underline-offset-2 hover:text-primary/80">Privacy Policy</Link>,{" "}
+                    <Link href="/gdpr" className="text-primary underline underline-offset-2 hover:text-primary/80">GDPR Statement</Link>{" "}
+                    and{" "}
+                    <Link href="/medical-disclaimer" className="text-primary underline underline-offset-2 hover:text-primary/80">Medical Disclaimer</Link>.
+                  </p>
+                </div>
+
+                {/* Checkboxes */}
+                <div className="space-y-3">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={consentMedical}
+                      onChange={(e) => setConsentMedical(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded border-border accent-primary cursor-pointer shrink-0"
+                    />
+                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">
+                      I understand this audit is for informational purposes only and is not a substitute for professional medical advice.
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      checked={consentPrivacy}
+                      onChange={(e) => setConsentPrivacy(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded border-border accent-primary cursor-pointer shrink-0"
+                    />
+                    <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors leading-relaxed">
+                      I agree to my data being processed as described in the Privacy Policy and GDPR Statement above.
+                    </span>
+                  </label>
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    onClick={handleBeginAudit}
+                    disabled={!consentMedical || !consentPrivacy}
+                    className="flex-1 h-12 font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+                  >
+                    Start Audit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleRetake}
+                    className="h-12 border-border hover:bg-muted px-6"
+                  >
+                    Back
+                  </Button>
+                </div>
+
+                <p className="text-xs text-muted-foreground/40 text-center">
+                  Fitest is a trading name of Leadsopedia Limited &middot; Company No. 13145058 &middot; London, United Kingdom
+                </p>
+
+              </div>
             </motion.div>
           )}
 
