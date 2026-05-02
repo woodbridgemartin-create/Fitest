@@ -1,72 +1,131 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useLocation, Link } from "wouter";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 type DashMode = "business" | "gym";
+type Period   = "7d" | "30d" | "all";
 
 /* ─── Colour system ──────────────────────────────────── */
 const TIER = {
-  Critical:   { bar: "bg-red-500",     text: "text-red-400",     dim: "bg-red-500/10",   border: "border-red-500/20",   hex: "#ef4444" },
-  Exposed:    { bar: "bg-amber-500",   text: "text-amber-400",   dim: "bg-amber-500/10", border: "border-amber-500/20", hex: "#f59e0b" },
-  Performing: { bar: "bg-primary",     text: "text-primary",     dim: "bg-primary/10",   border: "border-primary/20",   hex: "#aaff00" },
+  Critical:   { bar: "bg-red-500",     text: "text-red-400",     dim: "bg-red-500/10",     border: "border-red-500/20",   hex: "#ef4444" },
+  Exposed:    { bar: "bg-amber-500",   text: "text-amber-400",   dim: "bg-amber-500/10",   border: "border-amber-500/20", hex: "#f59e0b" },
+  Performing: { bar: "bg-primary",     text: "text-primary",     dim: "bg-primary/10",     border: "border-primary/20",   hex: "#abff1a" },
   Elite:      { bar: "bg-emerald-500", text: "text-emerald-400", dim: "bg-emerald-500/10", border: "border-emerald-500/20", hex: "#10b981" },
 } as const;
 type TierName = keyof typeof TIER;
 
-/* ─── Mock data ──────────────────────────────────────── */
-const BIZ_TIERS: { tier: TierName; count: number; pct: number }[] = [
-  { tier: "Critical",   count: 14, pct: 9  },
-  { tier: "Exposed",    count: 27, pct: 18 },
-  { tier: "Performing", count: 68, pct: 46 },
-  { tier: "Elite",      count: 39, pct: 26 },
-];
+/* ─── Submission types ───────────────────────────────── */
+type BizSub = { id: number; score: number; tier: TierName; department: string; date: Date };
+type GymSub = { id: number; score: number; tier: TierName; label: string; date: Date };
 
-const BIZ_DEPARTMENTS = [
-  { name: "Sales",      avg: 64, submissions: 34, topTier: "Performing" as TierName },
-  { name: "Operations", avg: 58, submissions: 28, topTier: "Exposed"    as TierName },
-  { name: "Marketing",  avg: 71, submissions: 22, topTier: "Performing" as TierName },
-  { name: "HR",         avg: 79, submissions: 18, topTier: "Elite"      as TierName },
-  { name: "Finance",    avg: 55, submissions: 26, topTier: "Exposed"    as TierName },
-  { name: "Tech",       avg: 83, submissions: 20, topTier: "Elite"      as TierName },
-];
+/* ─── Seeded random ──────────────────────────────────── */
+function sr(seed: number) {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
 
-const GYM_TIERS: { tier: TierName; count: number; pct: number }[] = [
-  { tier: "Critical",   count: 18, pct: 10 },
-  { tier: "Exposed",    count: 42, pct: 22 },
-  { tier: "Performing", count: 88, pct: 47 },
-  { tier: "Elite",      count: 41, pct: 22 },
-];
+/* ─── Reference "now" for demo data ─────────────────── */
+const NOW = new Date("2026-05-02T17:00:00");
 
+/* ─── Business submissions ───────────────────────────── */
+const BIZ_SUBS: BizSub[] = (() => {
+  const depts = ["Sales", "Operations", "Marketing", "HR", "Finance", "Tech"];
+  const plan: [TierName, number, number, number][] = [
+    ["Critical",    5,  30, 14],
+    ["Exposed",    31,  50, 27],
+    ["Performing", 51,  75, 68],
+    ["Elite",      76,  98, 39],
+  ];
+  const out: BizSub[] = [];
+  let k = 1, id = 0;
+  for (const [tier, lo, hi, cnt] of plan) {
+    for (let i = 0; i < cnt; i++) {
+      const score = Math.round(lo + sr(k++) * (hi - lo));
+      const daysAgo = Math.floor(sr(k++) * 29);
+      const hours   = Math.floor(sr(k++) * 9 + 8);
+      const mins    = Math.floor(sr(k++) * 60);
+      const dept    = depts[Math.floor(sr(k++) * depts.length)];
+      const date    = new Date(NOW);
+      date.setDate(date.getDate() - daysAgo);
+      date.setHours(hours, mins, 0, 0);
+      out.push({ id: id++, score, tier, department: dept, date });
+    }
+  }
+  return out.sort((a, b) => b.date.getTime() - a.date.getTime());
+})();
+
+/* ─── Gym submissions ────────────────────────────────── */
+const GYM_SUBS: GymSub[] = (() => {
+  const plan: [TierName, number, number, number][] = [
+    ["Critical",    5,  30, 18],
+    ["Exposed",    31,  50, 42],
+    ["Performing", 51,  75, 88],
+    ["Elite",      76,  98, 41],
+  ];
+  const out: GymSub[] = [];
+  let k = 300, id = 0;
+  for (const [tier, lo, hi, cnt] of plan) {
+    for (let i = 0; i < cnt; i++) {
+      const score   = Math.round(lo + sr(k++) * (hi - lo));
+      const daysAgo = Math.floor(sr(k++) * 29);
+      const hours   = Math.floor(sr(k++) * 12 + 6);
+      const mins    = Math.floor(sr(k++) * 60);
+      const date    = new Date(NOW);
+      date.setDate(date.getDate() - daysAgo);
+      date.setHours(hours, mins, 0, 0);
+      out.push({ id: id++, score, tier, label: `Member ${id}`, date });
+    }
+  }
+  return out.sort((a, b) => b.date.getTime() - a.date.getTime());
+})();
+
+/* ─── Gym support panel (static) ────────────────────── */
 const GYM_SUPPORT = [
-  { name: "Jordan Mitchell",  score: 19, tier: "Critical" as TierName,  issue: "Chronic fatigue — requested coach call",    date: "30 Apr" },
-  { name: "Sam Patel",        score: 22, tier: "Critical" as TierName,  issue: "Sleep disruption, low energy flagged",      date: "30 Apr" },
-  { name: "Riley Thompson",   score: 24, tier: "Critical" as TierName,  issue: "Requested nutrition guidance",              date: "29 Apr" },
-  { name: "Alex Nguyen",      score: 31, tier: "Exposed"  as TierName,  issue: "Stress management — follow-up needed",     date: "28 Apr" },
-  { name: "Morgan Davis",     score: 28, tier: "Exposed"  as TierName,  issue: "Recovery concerns, asked for programme",   date: "27 Apr" },
-  { name: "Casey Williams",   score: 33, tier: "Exposed"  as TierName,  issue: "Wants tailored training plan",             date: "26 Apr" },
-  { name: "Taylor Brown",     score: 21, tier: "Critical" as TierName,  issue: "Requested referral to physiotherapist",    date: "25 Apr" },
+  { name: "Jordan Mitchell", score: 19, tier: "Critical" as TierName, issue: "Chronic fatigue, requested coach call",   date: "30 Apr" },
+  { name: "Sam Patel",       score: 22, tier: "Critical" as TierName, issue: "Sleep disruption, low energy flagged",    date: "30 Apr" },
+  { name: "Riley Thompson",  score: 24, tier: "Critical" as TierName, issue: "Requested nutrition guidance",            date: "29 Apr" },
+  { name: "Alex Nguyen",     score: 31, tier: "Exposed"  as TierName, issue: "Stress management, follow-up needed",    date: "28 Apr" },
+  { name: "Morgan Davis",    score: 28, tier: "Exposed"  as TierName, issue: "Recovery concerns, asked for programme", date: "27 Apr" },
+  { name: "Casey Williams",  score: 33, tier: "Exposed"  as TierName, issue: "Wants tailored training plan",           date: "26 Apr" },
+  { name: "Taylor Brown",    score: 21, tier: "Critical" as TierName, issue: "Requested referral to physiotherapist",  date: "25 Apr" },
 ];
+
+/* ─── Utilities ──────────────────────────────────────── */
+function fmtDate(d: Date) {
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+function fmtTime(d: Date) {
+  return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+function fmtShort(d: Date) {
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+}
+function deriveTiers(subs: { tier: TierName }[], total: number) {
+  const counts: Record<TierName, number> = { Critical: 0, Exposed: 0, Performing: 0, Elite: 0 };
+  subs.forEach(s => counts[s.tier]++);
+  return (["Critical","Exposed","Performing","Elite"] as TierName[]).map(tier => ({
+    tier, count: counts[tier], pct: total > 0 ? Math.round((counts[tier] / total) * 100) : 0,
+  }));
+}
 
 /* ─── Animated counter ───────────────────────────────── */
 function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const mv = useMotionValue(0);
-  const spring = useSpring(mv, { stiffness: 60, damping: 18 });
+  const mv      = useMotionValue(0);
+  const spring  = useSpring(mv, { stiffness: 60, damping: 18 });
   const display = useTransform(spring, (v) => Math.round(v).toString() + suffix);
   useEffect(() => { mv.set(target); }, [target, mv]);
   return <motion.span>{display}</motion.span>;
 }
 
-/* ─── Big stat tile ──────────────────────────────────── */
+/* ─── Stat tile ──────────────────────────────────────── */
 function StatTile({ label, value, suffix = "", accent = false, sub, delay }: {
   label: string; value: number; suffix?: string; accent?: boolean; sub?: string; delay: number;
 }) {
   return (
     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.4 }}>
       <div className={`rounded-2xl border p-6 h-full flex flex-col justify-between ${
-        accent
-          ? "bg-primary/10 border-primary/30"
-          : "bg-card border-card-border"
+        accent ? "bg-primary/10 border-primary/30" : "bg-card border-card-border"
       }`}>
         <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-3">{label}</p>
         <div>
@@ -85,8 +144,7 @@ function TierRow({ tier, count, pct, delay }: { tier: TierName; count: number; p
   const c = TIER[tier];
   return (
     <motion.div
-      initial={{ opacity: 0, x: -8 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.35 }}
       className="flex items-center gap-3"
     >
@@ -94,8 +152,7 @@ function TierRow({ tier, count, pct, delay }: { tier: TierName; count: number; p
       <span className={`w-24 text-xs font-bold ${c.text} shrink-0`}>{tier}</span>
       <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
         <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
+          initial={{ width: 0 }} animate={{ width: `${pct}%` }}
           transition={{ delay: delay + 0.1, duration: 0.7, ease: "easeOut" }}
           className={`h-full rounded-full ${c.bar}`}
         />
@@ -110,7 +167,7 @@ function TierRow({ tier, count, pct, delay }: { tier: TierName; count: number; p
 
 /* ─── Donut ring ─────────────────────────────────────── */
 function DonutRing({ pct, color, size = 88 }: { pct: number; color: string; size?: number }) {
-  const r = (size - 12) / 2;
+  const r    = (size - 12) / 2;
   const circ = 2 * Math.PI * r;
   const [dash, setDash] = useState(0);
   useEffect(() => {
@@ -119,12 +176,10 @@ function DonutRing({ pct, color, size = 88 }: { pct: number; color: string; size
   }, [pct, circ]);
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeWidth={6} className="text-muted/40" />
-      <circle
-        cx={size / 2} cy={size / 2} r={r} fill="none"
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="currentColor" strokeWidth={6} className="text-muted/40" />
+      <circle cx={size/2} cy={size/2} r={r} fill="none"
         stroke={color} strokeWidth={6} strokeLinecap="round"
-        strokeDasharray={circ}
-        strokeDashoffset={circ - dash}
+        strokeDasharray={circ} strokeDashoffset={circ - dash}
         style={{ transition: "stroke-dashoffset 0.8s ease-out" }}
       />
     </svg>
@@ -132,38 +187,35 @@ function DonutRing({ pct, color, size = 88 }: { pct: number; color: string; size
 }
 
 /* ─── Risk indicator ─────────────────────────────────── */
-function RiskIndicator({ tiers, total, mode = "business" }: { tiers: typeof BIZ_TIERS; total: number; mode?: "business" | "gym" }) {
-  const atRisk = tiers.filter((t) => t.tier === "Critical" || t.tier === "Exposed").reduce((s, t) => s + t.count, 0);
-  const pct = Math.round((atRisk / total) * 100);
-  const level = pct >= 40 ? "High" : pct >= 20 ? "Moderate" : "Low";
+function RiskIndicator({ tiers, total, mode = "business" }: {
+  tiers: { tier: TierName; count: number; pct: number }[];
+  total: number;
+  mode?: "business" | "gym";
+}) {
+  const atRisk     = tiers.filter(t => t.tier === "Critical" || t.tier === "Exposed").reduce((s, t) => s + t.count, 0);
+  const pct        = total > 0 ? Math.round((atRisk / total) * 100) : 0;
+  const level      = pct >= 40 ? "High" : pct >= 20 ? "Moderate" : "Low";
   const levelColor = pct >= 40 ? "text-red-400" : pct >= 20 ? "text-amber-400" : "text-emerald-400";
-  const borderColor = pct >= 40 ? "border-red-500/30" : pct >= 20 ? "border-amber-500/30" : "border-emerald-500/30";
-  const bgColor = pct >= 40 ? "bg-red-500/5" : pct >= 20 ? "bg-amber-500/5" : "bg-emerald-500/5";
-  const ringColor = pct >= 40 ? "#ef4444" : pct >= 20 ? "#f59e0b" : "#10b981";
-
+  const borderColor= pct >= 40 ? "border-red-500/30" : pct >= 20 ? "border-amber-500/30" : "border-emerald-500/30";
+  const bgColor    = pct >= 40 ? "bg-red-500/5" : pct >= 20 ? "bg-amber-500/5" : "bg-emerald-500/5";
+  const ringColor  = pct >= 40 ? "#ef4444" : pct >= 20 ? "#f59e0b" : "#10b981";
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15, duration: 0.45 }}
       className={`rounded-2xl border ${borderColor} ${bgColor} p-6 mb-6`}
     >
       <div className="flex items-start gap-6">
-        {/* Ring */}
         <div className="relative shrink-0">
           <DonutRing pct={pct} color={ringColor} size={88} />
           <div className="absolute inset-0 flex items-center justify-center">
             <span className={`text-xl font-black ${levelColor}`}>{pct}%</span>
           </div>
         </div>
-
-        {/* Copy */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Performance Risk Indicator</p>
-            <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${borderColor} ${levelColor}`}>
-              {level} Risk
-            </span>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-full border ${borderColor} ${levelColor}`}>{level} Risk</span>
           </div>
           <h3 className={`text-2xl font-black mb-1 ${levelColor}`}>
             {atRisk} {atRisk === 1 ? "person" : "people"} at risk
@@ -178,13 +230,13 @@ function RiskIndicator({ tiers, total, mode = "business" }: { tiers: typeof BIZ_
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full bg-red-500" />
               <span className="text-xs text-muted-foreground">
-                Critical: <span className="font-bold text-red-400">{tiers.find((t) => t.tier === "Critical")?.count}</span>
+                Critical: <span className="font-bold text-red-400">{tiers.find(t => t.tier === "Critical")?.count ?? 0}</span>
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full bg-amber-500" />
               <span className="text-xs text-muted-foreground">
-                Exposed: <span className="font-bold text-amber-400">{tiers.find((t) => t.tier === "Exposed")?.count}</span>
+                Exposed: <span className="font-bold text-amber-400">{tiers.find(t => t.tier === "Exposed")?.count ?? 0}</span>
               </span>
             </div>
           </div>
@@ -194,16 +246,148 @@ function RiskIndicator({ tiers, total, mode = "business" }: { tiers: typeof BIZ_
   );
 }
 
+/* ─── Trend chart (SVG) ──────────────────────────────── */
+function TrendChart({ subs }: { subs: { score: number; date: Date }[] }) {
+  const days = useMemo(() => {
+    const map = new Map<string, number[]>();
+    subs.forEach(s => {
+      const key = s.date.toISOString().slice(0, 10);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(s.score);
+    });
+    return Array.from(map.entries())
+      .map(([ds, scores]) => ({
+        ds,
+        date: new Date(ds + "T12:00:00"),
+        avg: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
+        count: scores.length,
+      }))
+      .sort((a, b) => a.ds.localeCompare(b.ds));
+  }, [subs]);
+
+  if (days.length < 2) {
+    return <p className="text-xs text-muted-foreground/40 text-center py-6">Not enough data for this period.</p>;
+  }
+
+  const W = 600, H = 80, PX = 8, PY = 6;
+  const avgs   = days.map(d => d.avg);
+  const minA   = Math.max(0,   Math.min(...avgs) - 8);
+  const maxA   = Math.min(100, Math.max(...avgs) + 8);
+  const toX    = (i: number) => PX + (i / (days.length - 1)) * (W - PX * 2);
+  const toY    = (v: number) => H - PY - ((v - minA) / (maxA - minA)) * (H - PY * 2);
+  const line   = days.map((d, i) => `${i === 0 ? "M" : "L"} ${toX(i).toFixed(1)} ${toY(d.avg).toFixed(1)}`).join(" ");
+  const area   = `${line} L ${toX(days.length - 1).toFixed(1)} ${H} L ${toX(0).toFixed(1)} ${H} Z`;
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 80 }} preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="tcfill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="#abff1a" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#abff1a" stopOpacity="0"    />
+          </linearGradient>
+        </defs>
+        <path d={area} fill="url(#tcfill)" />
+        <path d={line} fill="none" stroke="#abff1a" strokeWidth="1.8" strokeLinejoin="round" />
+        {days.map((d, i) => (
+          <circle key={i} cx={toX(i)} cy={toY(d.avg)} r="3" fill="#abff1a" />
+        ))}
+      </svg>
+      <div className="flex justify-between text-xs text-muted-foreground/40 mt-1 px-0.5">
+        <span>{fmtShort(days[0].date)}</span>
+        <span className="text-muted-foreground/30">Daily avg score</span>
+        <span>{fmtShort(days[days.length - 1].date)}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Recent activity ────────────────────────────────── */
+function RecentActivity({ bizSubs, gymSubs, mode }: {
+  bizSubs: BizSub[]; gymSubs: GymSub[]; mode: DashMode;
+}) {
+  const recent = (mode === "business" ? bizSubs : gymSubs).slice(0, 10);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.38, duration: 0.4 }}
+      className="bg-card border border-card-border rounded-2xl p-6 mt-6"
+    >
+      <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">
+        Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">— last 10 submissions</span>
+      </p>
+
+      {/* Header row */}
+      <div className="hidden md:grid grid-cols-[40px_1fr_110px_130px_90px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+        <span className="text-xs text-muted-foreground/40 font-semibold">Score</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">
+          {mode === "business" ? "Department" : "Member"}
+        </span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">Tier</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">Date</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold text-right">Time</span>
+      </div>
+
+      <div className="space-y-0.5">
+        {recent.map((s, i) => {
+          const c   = TIER[s.tier];
+          const biz = s as BizSub;
+          const gym = s as GymSub;
+          return (
+            <motion.div
+              key={s.id}
+              initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.42 + i * 0.04, duration: 0.3 }}
+              className="grid grid-cols-[40px_1fr_auto] md:grid-cols-[40px_1fr_110px_130px_90px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
+            >
+              <div className={`w-9 h-9 rounded-xl ${c.dim} border ${c.border} flex items-center justify-center`}>
+                <span className={`text-xs font-black ${c.text}`}>{s.score}</span>
+              </div>
+              <span className="text-sm font-medium truncate">
+                {mode === "business" ? biz.department : gym.label}
+              </span>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
+                {s.tier}
+              </span>
+              <span className="text-xs text-muted-foreground/60 hidden md:block tabular-nums">
+                {fmtDate(s.date)}
+              </span>
+              <span className="text-xs text-muted-foreground/40 text-right hidden md:block tabular-nums">
+                {fmtTime(s.date)}
+              </span>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Period filter button ───────────────────────────── */
+function PeriodBtn({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 ${
+        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
 /* ─── Main component ─────────────────────────────────── */
 export default function Dashboard() {
-  const [, navigate] = useLocation();
+  const [, navigate]  = useLocation();
   const [userEmail, setUserEmail] = useState("");
-  const [orgName, setOrgName] = useState("Your Organisation");
-  const [mode, setMode] = useState<DashMode>("business");
+  const [orgName, setOrgName]     = useState("Your Organisation");
+  const [mode, setMode]           = useState<DashMode>("business");
+  const [period, setPeriod]       = useState<Period>("30d");
 
   useEffect(() => {
     const demo = new URLSearchParams(window.location.search).get("demo");
-    const raw = localStorage.getItem("fitest_auth");
+    const raw  = localStorage.getItem("fitest_auth");
     if (!raw && demo !== "1") { navigate("/login"); return; }
     if (raw && raw !== "true") {
       try {
@@ -212,7 +396,6 @@ export default function Dashboard() {
         else if (demo !== "1") { navigate("/login"); return; }
       } catch { if (demo !== "1") { navigate("/login"); return; } }
     }
-    // Load org data from onboarding
     const orgRaw = localStorage.getItem("fitest_org");
     if (orgRaw) {
       try {
@@ -223,20 +406,65 @@ export default function Dashboard() {
     }
   }, [navigate]);
 
+  /* ── Period cutoff ───────────────────────────────────── */
+  const cutoff = useMemo(() => {
+    if (period === "7d")  { const d = new Date(NOW); d.setDate(d.getDate() - 7);  return d; }
+    if (period === "30d") { const d = new Date(NOW); d.setDate(d.getDate() - 30); return d; }
+    return new Date(0);
+  }, [period]);
+
+  /* ── Filtered submissions ────────────────────────────── */
+  const filteredBiz = useMemo(() => BIZ_SUBS.filter(s => s.date >= cutoff), [cutoff]);
+  const filteredGym = useMemo(() => GYM_SUBS.filter(s => s.date >= cutoff), [cutoff]);
+
+  /* ── Derived tier data ───────────────────────────────── */
+  const bizTiers = useMemo(() => deriveTiers(filteredBiz, filteredBiz.length), [filteredBiz]);
+  const gymTiers = useMemo(() => deriveTiers(filteredGym, filteredGym.length), [filteredGym]);
+
+  /* ── Derived averages ────────────────────────────────── */
+  const bizAvg = useMemo(() =>
+    filteredBiz.length ? Math.round(filteredBiz.reduce((s, x) => s + x.score, 0) / filteredBiz.length) : 0,
+  [filteredBiz]);
+  const gymAvg = useMemo(() =>
+    filteredGym.length ? Math.round(filteredGym.reduce((s, x) => s + x.score, 0) / filteredGym.length) : 0,
+  [filteredGym]);
+
+  /* ── Derived department breakdown ────────────────────── */
+  const bizDepts = useMemo(() => {
+    const map: Record<string, { scores: number[]; tiers: TierName[] }> = {};
+    filteredBiz.forEach(s => {
+      if (!map[s.department]) map[s.department] = { scores: [], tiers: [] };
+      map[s.department].scores.push(s.score);
+      map[s.department].tiers.push(s.tier);
+    });
+    return Object.entries(map).map(([name, d]) => {
+      const avg = Math.round(d.scores.reduce((a, b) => a + b, 0) / d.scores.length);
+      const tc: Record<TierName, number> = { Critical: 0, Exposed: 0, Performing: 0, Elite: 0 };
+      d.tiers.forEach(t => tc[t]++);
+      const topTier = (Object.entries(tc) as [TierName, number][]).sort((a, b) => b[1] - a[1])[0][0];
+      return { name, avg, submissions: d.scores.length, topTier };
+    }).sort((a, b) => b.submissions - a.submissions);
+  }, [filteredBiz]);
+
+  /* ── Performing + Elite count ────────────────────────── */
+  const bizGoodCount = useMemo(() =>
+    filteredBiz.filter(s => s.tier === "Performing" || s.tier === "Elite").length,
+  [filteredBiz]);
+  const gymGoodCount = useMemo(() =>
+    filteredGym.filter(s => s.tier === "Performing" || s.tier === "Elite").length,
+  [filteredGym]);
+
   function handleSignOut() {
     localStorage.removeItem("fitest_auth");
     navigate("/login");
   }
 
-  const bizTotal  = BIZ_TIERS.reduce((s, t) => s + t.count, 0);
-  const gymTotal  = GYM_TIERS.reduce((s, t) => s + t.count, 0);
-  const bizAvg    = 61;
-  const gymAvg    = 58;
+  const periodLabel = period === "7d" ? "Last 7 days" : period === "30d" ? "Last 30 days" : "All time";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
 
-      {/* ── Top bar ──────────────────────────────────── */}
+      {/* ── Top bar ────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-sm">
         <div className="container mx-auto px-4 h-14 flex items-center justify-between max-w-6xl gap-4">
           <Link href="/">
@@ -244,8 +472,6 @@ export default function Dashboard() {
               <span className="text-primary">F</span>ITEST
             </span>
           </Link>
-
-          {/* Org + licence */}
           <div className="flex items-center gap-3 min-w-0">
             <span className="text-sm font-semibold truncate hidden sm:block">{orgName}</span>
             <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2.5 py-0.5 shrink-0">
@@ -253,7 +479,6 @@ export default function Dashboard() {
               <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Licence Active</span>
             </div>
           </div>
-
           <div className="flex items-center gap-2 shrink-0">
             {userEmail && <span className="text-xs text-muted-foreground hidden md:block">{userEmail}</span>}
             <Button variant="outline" size="sm" onClick={handleSignOut} className="text-xs border-border hover:border-primary/40 h-8">
@@ -265,10 +490,9 @@ export default function Dashboard() {
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
 
-        {/* ── Page heading + toggle ─────────────────── */}
+        {/* ── Page heading ─────────────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
           className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8"
         >
@@ -277,92 +501,88 @@ export default function Dashboard() {
             <h1 className="text-2xl md:text-3xl font-black leading-tight">{orgName}</h1>
             <p className="text-sm text-muted-foreground mt-1">
               {mode === "business" ? "Workforce performance overview" : "Member performance overview"}
+              <span className="text-muted-foreground/40 mx-2">·</span>
+              <span className="text-muted-foreground/60">{periodLabel}</span>
             </p>
           </div>
 
-          <div className="flex items-center gap-1 bg-card border border-card-border rounded-xl p-1 self-start sm:self-auto shrink-0">
-            {(["business", "gym"] as DashMode[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => setMode(m)}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all duration-200 ${
-                  mode === m ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {m === "business" ? "Business" : "Gym"}
-              </button>
-            ))}
+          <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
+            {/* Period filter */}
+            <div className="flex items-center gap-1 bg-card border border-card-border rounded-xl p-1">
+              <PeriodBtn label="7d"  active={period === "7d"}  onClick={() => setPeriod("7d")}  />
+              <PeriodBtn label="30d" active={period === "30d"} onClick={() => setPeriod("30d")} />
+              <PeriodBtn label="All" active={period === "all"} onClick={() => setPeriod("all")} />
+            </div>
+            {/* Mode toggle */}
+            <div className="flex items-center gap-1 bg-card border border-card-border rounded-xl p-1">
+              {(["business","gym"] as DashMode[]).map(m => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold capitalize transition-all duration-200 ${
+                    mode === m ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {m === "business" ? "Business" : "Gym"}
+                </button>
+              ))}
+            </div>
           </div>
         </motion.div>
 
-        {/* ── Views ─────────────────────────────────── */}
+        {/* ── Views ────────────────────────────────────── */}
         <AnimatePresence mode="wait">
 
           {/* ━━━ BUSINESS ━━━ */}
           {mode === "business" && (
             <motion.div key="biz" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
 
-              {/* Risk indicator */}
-              <RiskIndicator tiers={BIZ_TIERS} total={bizTotal} />
+              <RiskIndicator tiers={bizTiers} total={filteredBiz.length} />
 
               {/* Stat tiles */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <StatTile label="Total Submissions" value={bizTotal}       delay={0.05} sub="across all departments" />
-                <StatTile label="Average Score"     value={bizAvg}         delay={0.10} sub="out of 100" />
-                <StatTile label="Performing & Elite" value={107}           suffix=""    delay={0.15} sub={`${Math.round((107 / bizTotal) * 100)}% of workforce`} accent />
-                <StatTile label="Departments Active" value={6}             delay={0.20} sub="tracked this period" />
+                <StatTile label="Total Submissions"  value={filteredBiz.length}  delay={0.05} sub={`${periodLabel}`} />
+                <StatTile label="Average Score"       value={bizAvg}              delay={0.10} sub="out of 100" />
+                <StatTile label="Performing & Elite"  value={bizGoodCount}        delay={0.15} sub={`${filteredBiz.length > 0 ? Math.round((bizGoodCount / filteredBiz.length) * 100) : 0}% of workforce`} accent />
+                <StatTile label="Departments Active"  value={bizDepts.length}     delay={0.20} sub="tracked this period" />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-                {/* Tier breakdown */}
-                <motion.div
-                  className="lg:col-span-2"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.4 }}
-                >
+                {/* Tier distribution */}
+                <motion.div className="lg:col-span-2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.4 }}>
                   <div className="bg-card border border-card-border rounded-2xl p-6 h-full">
                     <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">Tier Distribution</p>
                     <div className="space-y-5 mb-5">
-                      {BIZ_TIERS.map((t, i) => <TierRow key={t.tier} {...t} delay={0.28 + i * 0.06} />)}
+                      {bizTiers.map((t, i) => <TierRow key={t.tier} {...t} delay={0.28 + i * 0.06} />)}
                     </div>
-                    {/* Stacked bar */}
                     <div className="flex h-2 rounded-full overflow-hidden gap-0.5 mt-6">
-                      {BIZ_TIERS.map((t) => (
+                      {bizTiers.map(t => (
                         <motion.div
                           key={t.tier}
-                          initial={{ flex: 0 }}
-                          animate={{ flex: t.pct }}
+                          initial={{ flex: 0 }} animate={{ flex: t.pct }}
                           transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
                           className={`${TIER[t.tier].bar} rounded-full`}
                         />
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground/40 mt-3">Based on {bizTotal} submissions</p>
+                    <p className="text-xs text-muted-foreground/40 mt-3">Based on {filteredBiz.length} submissions</p>
                   </div>
                 </motion.div>
 
                 {/* Department breakdown */}
-                <motion.div
-                  className="lg:col-span-3"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.32, duration: 0.4 }}
-                >
+                <motion.div className="lg:col-span-3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32, duration: 0.4 }}>
                   <div className="bg-card border border-card-border rounded-2xl p-6 h-full">
                     <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">Department Breakdown</p>
                     <div className="space-y-1">
-                      {BIZ_DEPARTMENTS.map((dept, i) => {
-                        const c = TIER[dept.topTier];
-                        const barWidth = (dept.avg / 100) * 100;
+                      {bizDepts.map((dept, i) => {
+                        const c = TIER[dept.topTier as TierName];
                         return (
                           <motion.div
                             key={dept.name}
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.35 + i * 0.06, duration: 0.3 }}
-                            className="grid grid-cols-[110px_1fr_80px_80px] items-center gap-3 px-3 py-3 rounded-xl hover:bg-muted/40 transition-colors group"
+                            className="grid grid-cols-[110px_1fr_80px_80px] items-center gap-3 px-3 py-3 rounded-xl hover:bg-muted/40 transition-colors"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               <div className={`w-2 h-2 rounded-full ${c.bar} shrink-0`} />
@@ -370,8 +590,7 @@ export default function Dashboard() {
                             </div>
                             <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                               <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${barWidth}%` }}
+                                initial={{ width: 0 }} animate={{ width: `${dept.avg}%` }}
                                 transition={{ delay: 0.4 + i * 0.06, duration: 0.6, ease: "easeOut" }}
                                 className={`h-full rounded-full ${c.bar} opacity-70`}
                               />
@@ -389,8 +608,21 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground/40 mt-3 px-3">Average score shown per department</p>
                   </div>
                 </motion.div>
-
               </div>
+
+              {/* Performance trend */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.36, duration: 0.4 }}
+                className="bg-card border border-card-border rounded-2xl p-6 mt-6"
+              >
+                <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-4">Performance Trend</p>
+                <TrendChart subs={filteredBiz} />
+              </motion.div>
+
+              {/* Recent activity */}
+              <RecentActivity bizSubs={filteredBiz} gymSubs={filteredGym} mode="business" />
+
             </motion.div>
           )}
 
@@ -398,53 +630,41 @@ export default function Dashboard() {
           {mode === "gym" && (
             <motion.div key="gym" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
 
-              {/* Risk indicator */}
-              <RiskIndicator tiers={GYM_TIERS} total={gymTotal} mode="gym" />
+              <RiskIndicator tiers={gymTiers} total={filteredGym.length} mode="gym" />
 
               {/* Stat tiles */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <StatTile label="Total Members"    value={213}     delay={0.05} sub="registered on platform" />
-                <StatTile label="Audits Completed" value={189}     delay={0.10} sub={`${Math.round((189 / 213) * 100)}% completion rate`} />
-                <StatTile label="Average Score"    value={gymAvg}  delay={0.15} sub="out of 100" />
+                <StatTile label="Total Members"    value={213}              delay={0.05} sub="registered on platform" />
+                <StatTile label="Audits Completed" value={filteredGym.length} delay={0.10} sub={`${periodLabel}`} />
+                <StatTile label="Average Score"    value={gymAvg}           delay={0.15} sub="out of 100" />
                 <StatTile label="Support Requests" value={GYM_SUPPORT.length} delay={0.20} sub="pending action" accent />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
                 {/* Tier breakdown */}
-                <motion.div
-                  className="lg:col-span-2"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25, duration: 0.4 }}
-                >
+                <motion.div className="lg:col-span-2" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.4 }}>
                   <div className="bg-card border border-card-border rounded-2xl p-6 h-full">
                     <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">Member Tiers</p>
                     <div className="space-y-5 mb-5">
-                      {GYM_TIERS.map((t, i) => <TierRow key={t.tier} {...t} delay={0.28 + i * 0.06} />)}
+                      {gymTiers.map((t, i) => <TierRow key={t.tier} {...t} delay={0.28 + i * 0.06} />)}
                     </div>
                     <div className="flex h-2 rounded-full overflow-hidden gap-0.5 mt-6">
-                      {GYM_TIERS.map((t) => (
+                      {gymTiers.map(t => (
                         <motion.div
                           key={t.tier}
-                          initial={{ flex: 0 }}
-                          animate={{ flex: t.pct }}
+                          initial={{ flex: 0 }} animate={{ flex: t.pct }}
                           transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
                           className={`${TIER[t.tier].bar} rounded-full`}
                         />
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground/40 mt-3">189 audits from 213 members</p>
+                    <p className="text-xs text-muted-foreground/40 mt-3">{filteredGym.length} audits this period</p>
                   </div>
                 </motion.div>
 
                 {/* Support requests */}
-                <motion.div
-                  className="lg:col-span-3"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.32, duration: 0.4 }}
-                >
+                <motion.div className="lg:col-span-3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32, duration: 0.4 }}>
                   <div className="bg-card border border-card-border rounded-2xl p-6 h-full">
                     <div className="flex items-center justify-between mb-5">
                       <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Members Requesting Support</p>
@@ -458,8 +678,7 @@ export default function Dashboard() {
                         return (
                           <motion.div
                             key={m.name}
-                            initial={{ opacity: 0, x: -6 }}
-                            animate={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.35 + i * 0.05, duration: 0.3 }}
                             className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-colors group"
                           >
@@ -485,20 +704,21 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </motion.div>
-
               </div>
+
+              {/* Recent activity */}
+              <RecentActivity bizSubs={filteredBiz} gymSubs={filteredGym} mode="gym" />
+
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* ── Footer note ───────────────────────────── */}
+        {/* ── Footer ───────────────────────────────────── */}
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
           className="text-xs text-muted-foreground/30 text-center mt-10"
         >
-          Fitest · Leadsopedia Limited · Data shown is for the current licence period only
+          Fitest · Leadsopedia Limited · Data shown is for the selected reporting period only
         </motion.p>
 
       </main>
