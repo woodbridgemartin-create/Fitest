@@ -16,13 +16,18 @@ import MedicalDisclaimer from "@/pages/MedicalDisclaimer";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Demo from "@/pages/Demo";
+import Onboarding from "@/pages/Onboarding";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
 
 function Router() {
   const [location] = useLocation();
-  const isStandalone = location === "/login" || location === "/dashboard" || location === "/demo";
+  const isStandalone =
+    location === "/login" ||
+    location === "/dashboard" ||
+    location === "/demo" ||
+    location === "/onboarding";
 
   if (isStandalone) {
     return (
@@ -30,6 +35,7 @@ function Router() {
         <Route path="/login" component={Login} />
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/demo" component={Demo} />
+        <Route path="/onboarding" component={Onboarding} />
       </Switch>
     );
   }
