@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import Home from "@/pages/Home";
 import ForBusinesses from "@/pages/ForBusinesses";
 import ForGyms from "@/pages/ForGyms";
@@ -14,17 +15,20 @@ const queryClient = new QueryClient();
 
 function Router() {
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/for-businesses" component={ForBusinesses} />
-        <Route path="/for-gyms" component={ForGyms} />
-        <Route path="/faq" component={FAQ} />
-        <Route path="/contact" component={Contact} />
-        <Route component={NotFound} />
-      </Switch>
-    </>
+      <div className="flex-1">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/for-businesses" component={ForBusinesses} />
+          <Route path="/for-gyms" component={ForGyms} />
+          <Route path="/faq" component={FAQ} />
+          <Route path="/contact" component={Contact} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
+      <Footer />
+    </div>
   );
 }
 
