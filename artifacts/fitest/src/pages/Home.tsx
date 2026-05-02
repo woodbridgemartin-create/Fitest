@@ -534,83 +534,117 @@ export default function Home() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Business licence */}
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45 }}>
-                      <div className="relative bg-card border border-primary/30 rounded-2xl p-8 h-full flex flex-col shadow-lg shadow-primary/5">
-                        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent rounded-t-2xl" />
-                        <div className="mb-6">
-                          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-4">
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                            <span className="text-xs font-bold text-primary uppercase tracking-widest">Business</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+                    {[
+                      {
+                        label: "Business",
+                        price: "£249",
+                        sublabel: "Business Licence",
+                        features: [
+                          "Workforce performance audit",
+                          "20 validated questions",
+                          "Tiered scoring: Critical → Elite",
+                          "Department insights",
+                          "Aggregated team reporting",
+                          "Downloadable PDF per respondent",
+                        ],
+                        stripe: "https://buy.stripe.com/8x29ASdLL99z3ycbMX6AM05",
+                        cta: "Purchase Business Licence",
+                        popular: true,
+                        delay: 0,
+                      },
+                      {
+                        label: "Gym",
+                        price: "£149",
+                        sublabel: "Gym Licence",
+                        features: [
+                          "Member performance audit",
+                          "20 validated questions",
+                          "Tiered scoring: Critical → Elite",
+                          "Coaching insights",
+                          "Member retention tracking",
+                          "Downloadable PDF per member",
+                        ],
+                        stripe: "https://buy.stripe.com/fZudR89vvdpP9WA9EP6AM06",
+                        cta: "Purchase Gym Licence",
+                        popular: false,
+                        delay: 0.1,
+                      },
+                    ].map(({ label, price, sublabel, features, stripe, cta, popular, delay }) => (
+                      <motion.div
+                        key={label}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.45, delay }}
+                        className="h-full"
+                      >
+                        <div className={`relative bg-card rounded-2xl p-8 h-full flex flex-col transition-all duration-300 ${
+                          popular
+                            ? "border border-primary/40 shadow-[0_0_0_1px_hsl(var(--primary)/0.15),0_0_32px_-4px_hsl(var(--primary)/0.18)]"
+                            : "border border-card-border hover:border-primary/20"
+                        }`}>
+
+                          {/* Top glow line — popular only */}
+                          {popular && (
+                            <div className="absolute top-0 left-8 right-8 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+                          )}
+
+                          {/* Badge row */}
+                          <div className="flex items-center justify-between mb-6">
+                            <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 border ${
+                              popular
+                                ? "bg-primary/10 border-primary/20"
+                                : "bg-muted/60 border-border"
+                            }`}>
+                              <div className={`w-1.5 h-1.5 rounded-full ${popular ? "bg-primary" : "bg-muted-foreground"}`} />
+                              <span className={`text-xs font-bold uppercase tracking-widest ${popular ? "text-primary" : "text-muted-foreground"}`}>
+                                {label}
+                              </span>
+                            </div>
+                            {popular && (
+                              <span className="text-xs font-bold bg-primary text-primary-foreground px-2.5 py-1 rounded-full uppercase tracking-wider">
+                                Most Popular
+                              </span>
+                            )}
                           </div>
-                          <div className="flex items-baseline gap-1 mb-1">
-                            <span className="text-5xl font-black tracking-tight">£249</span>
-                            <span className="text-muted-foreground text-sm font-medium">/ year</span>
+
+                          {/* Price */}
+                          <div className="mb-6">
+                            <div className="flex items-baseline gap-1.5 mb-1">
+                              <span className="text-5xl font-black tracking-tight">{price}</span>
+                              <span className="text-muted-foreground text-sm font-medium">/ year</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground/60 font-semibold uppercase tracking-widest">{sublabel}</p>
                           </div>
-                          <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-wider">Business Licence</p>
+
+                          {/* Divider */}
+                          <div className="border-t border-border/40 mb-6" />
+
+                          {/* Features */}
+                          <ul className="space-y-3 mb-8 flex-1">
+                            {features.map((item) => (
+                              <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
+                                <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                {item}
+                              </li>
+                            ))}
+                          </ul>
+
+                          {/* CTA */}
+                          <a href={stripe} target="_blank" rel="noopener noreferrer">
+                            <Button
+                              size="lg"
+                              className="w-full h-12 font-bold text-sm bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/20"
+                            >
+                              {cta}
+                            </Button>
+                          </a>
                         </div>
-
-                        <ul className="space-y-3 mb-8 flex-1">
-                          {[
-                            "Workforce performance audit",
-                            "Department insights",
-                            "Aggregated reporting",
-                          ].map((item) => (
-                            <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                              <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                              </svg>
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-
-                        <a href="https://buy.stripe.com/8x29ASdLL99z3ycbMX6AM05" target="_blank" rel="noopener noreferrer">
-                          <Button size="lg" className="w-full h-13 font-bold text-base bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-xl">
-                            Purchase Business Licence
-                          </Button>
-                        </a>
-                      </div>
-                    </motion.div>
-
-                    {/* Gym licence */}
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.1 }}>
-                      <div className="relative bg-card border border-card-border rounded-2xl p-8 h-full flex flex-col hover:border-primary/20 transition-colors duration-300">
-                        <div className="mb-6">
-                          <div className="inline-flex items-center gap-2 bg-muted border border-border rounded-full px-3 py-1 mb-4">
-                            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground" />
-                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Gym</span>
-                          </div>
-                          <div className="flex items-baseline gap-1 mb-1">
-                            <span className="text-5xl font-black tracking-tight">£149</span>
-                            <span className="text-muted-foreground text-sm font-medium">/ year</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-wider">Gym Licence</p>
-                        </div>
-
-                        <ul className="space-y-3 mb-8 flex-1">
-                          {[
-                            "Member performance audit",
-                            "Coaching insights",
-                            "Retention tracking",
-                          ].map((item) => (
-                            <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                              <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                              </svg>
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-
-                        <a href="https://buy.stripe.com/fZudR89vvdpP9WA9EP6AM06" target="_blank" rel="noopener noreferrer">
-                          <Button size="lg" variant="outline" className="w-full h-13 font-bold text-base border-border hover:border-primary/40 hover:bg-muted/60 rounded-xl transition-colors duration-200">
-                            Purchase Gym Licence
-                          </Button>
-                        </a>
-                      </div>
-                    </motion.div>
+                      </motion.div>
+                    ))}
                   </div>
 
                   <p className="text-center text-xs text-muted-foreground/40 mt-8">
