@@ -184,7 +184,7 @@ export default function ForGyms() {
                 Request Demo
               </Button>
             </Link>
-            <a href="/#pricing">
+            <a href="https://buy.stripe.com/fZudR89vvdpP9WA9EP6AM06" target="_blank" rel="noopener noreferrer">
               <Button
                 size="lg"
                 variant="outline"

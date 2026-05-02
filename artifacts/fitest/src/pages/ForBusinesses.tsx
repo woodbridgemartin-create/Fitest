@@ -184,7 +184,7 @@ export default function ForBusinesses() {
                 Request Demo
               </Button>
             </Link>
-            <a href="/#pricing">
+            <a href="https://buy.stripe.com/8x29ASdLL99z3ycbMX6AM05" target="_blank" rel="noopener noreferrer">
               <Button
                 size="lg"
                 variant="outline"

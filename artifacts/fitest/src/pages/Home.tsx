@@ -503,15 +503,15 @@ export default function Home() {
                           <div className="text-primary text-3xl font-black mb-4">{letter}</div>
                           <h3 className="text-xl font-bold mb-2">{title}</h3>
                           <p className="text-sm text-muted-foreground leading-relaxed mb-6">{desc}</p>
-                          <div className="flex gap-3">
+                          <div className="flex gap-3 flex-wrap">
                             <Link href="/demo">
                               <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
                                 Request Demo
                               </Button>
                             </Link>
-                            <Link href={page}>
-                              <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-                                Learn more
+                            <Link href="/login">
+                              <Button variant="outline" className="border-border hover:border-primary/40 font-semibold">
+                                Access Platform
                               </Button>
                             </Link>
                           </div>
