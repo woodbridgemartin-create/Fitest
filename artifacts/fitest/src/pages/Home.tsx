@@ -34,41 +34,165 @@ interface PrintReportProps {
   score: number;
 }
 
+const TIER_COLORS: Record<string, string> = {
+  Critical: "#ef4444",
+  Exposed: "#f59e0b",
+  Performing: "#a3e635",
+  Elite: "#10b981",
+};
+
 function PrintReport({ email, auditPath, questions, answers, score }: PrintReportProps) {
   const tier = getTier(score);
   const label = auditPath === "gym" ? "Member Performance Audit" : "Workforce Performance Audit";
+  const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  const page1Qs = questions.slice(0, 10);
+  const page2Qs = questions.slice(10);
+  const total = answers.reduce((a, b) => a + (b ?? 0), 0);
+  const maxTotal = questions.length * 5;
+
+  const ReportLogo = ({ page }: { page: number }) => (
+    <div className="rpt-header">
+      <div className="rpt-logo">
+        <span className="rpt-logo-f">F</span>
+        <span className="rpt-logo-rest">ITEST</span>
+      </div>
+      <div className="rpt-header-right">
+        <span className="rpt-header-label">{label}</span>
+        <span className="rpt-header-page">Page {page} of 3</span>
+      </div>
+    </div>
+  );
+
+  const CompanyFooter = ({ withDisclaimer }: { withDisclaimer?: boolean }) => (
+    <div className="rpt-footer">
+      {withDisclaimer && (
+        <div className="rpt-footer-disclaimer">
+          <strong>Medical Disclaimer:</strong> This audit is not medical advice. It is for informational purposes only. Always consult a qualified healthcare professional before making changes to your health, fitness or lifestyle.
+        </div>
+      )}
+      <div className="rpt-footer-company">
+        <div className="rpt-footer-co-name">
+          <strong>Fitest</strong> &nbsp;|&nbsp; Trading name of Leadsopedia Limited &nbsp;|&nbsp; Company Number: 13145058 &nbsp;|&nbsp; London, United Kingdom
+        </div>
+        <div className="rpt-footer-co-contact">hello@fitest.co.uk &nbsp;|&nbsp; fitest.co.uk</div>
+      </div>
+    </div>
+  );
+
+  const QuestionRow = ({ q, i, ans }: { q: string; i: number; ans: number | null }) => {
+    const val = ans ?? 0;
+    const pct = (val / 5) * 100;
+    return (
+      <div className="rpt-qrow">
+        <div className="rpt-qrow-top">
+          <span className="rpt-qrow-num">{i + 1}.</span>
+          <span className="rpt-qrow-text">{q}</span>
+          <span className="rpt-qrow-score">{val}/5</span>
+        </div>
+        <div className="rpt-qrow-bar-track">
+          <div className="rpt-qrow-bar-fill" style={{ width: `${pct}%`, backgroundColor: TIER_COLORS[tier.name] }} />
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="print-report hidden print:block">
-      <div className="print-header">
-        <span className="print-logo-f">F</span>
-        <span className="print-logo-text">ITEST</span>
-      </div>
-      <p className="print-meta">Audit report for {email}</p>
-      <h2 className="print-audit-title">YOUR RESULT : {label.toUpperCase()}</h2>
-      <div className="print-score-block">
-        <div className="print-score">{score}/100</div>
-        <div className="print-tier-label">TIER : {tier.name.toUpperCase()} ({tier.min} TO {tier.max})</div>
-      </div>
-      <div className="print-tier-bar">
-        {TIERS.map((t) => (
-          <span key={t.name} className={t.name === tier.name ? "print-tier-active" : ""}>{t.name.toUpperCase()}</span>
-        ))}
-      </div>
-      <p className="print-description">{tier.description}</p>
-      <h3 className="print-breakdown-title">BREAKDOWN</h3>
-      <p className="print-breakdown-sub">Your answers, question by question</p>
-      <div className="print-questions">
-        {questions.map((q, i) => (
-          <div key={i} className="print-question-row">
-            <span className="print-q-num">{i + 1}.</span>
-            <span className="print-q-text">{q}</span>
-            <span className="print-q-score">{answers[i] ?? 0}/5</span>
+    <div className="rpt hidden print:block">
+
+      {/* ══════ PAGE 1 : SCORE SUMMARY ══════ */}
+      <div className="rpt-page">
+        <ReportLogo page={1} />
+
+        <div className="rpt-p1-meta">
+          <span>Report generated: {reportDate}</span>
+          <span>Prepared for: <strong>{email}</strong></span>
+        </div>
+
+        <div className="rpt-p1-score-section">
+          <div className="rpt-p1-score-left">
+            <div className="rpt-p1-score-number">{score}</div>
+            <div className="rpt-p1-score-denom">/100</div>
           </div>
-        ))}
+          <div className="rpt-p1-score-right">
+            <div className="rpt-p1-tier-badge" style={{ color: TIER_COLORS[tier.name], borderColor: TIER_COLORS[tier.name] }}>
+              {tier.name.toUpperCase()}
+            </div>
+            <div className="rpt-p1-tier-range">{tier.min} – {tier.max} range</div>
+            <div className="rpt-p1-tier-desc">{tier.description}</div>
+          </div>
+        </div>
+
+        <div className="rpt-p1-gradient-bar">
+          <div className="rpt-p1-gradient-fill" style={{ width: `${score}%` }} />
+        </div>
+        <div className="rpt-p1-tier-row">
+          {TIERS.map((t) => (
+            <span key={t.name} className="rpt-p1-tier-label" style={{ color: tier.name === t.name ? TIER_COLORS[t.name] : "#bbb", fontWeight: tier.name === t.name ? 800 : 400 }}>
+              {t.name}
+            </span>
+          ))}
+        </div>
+
+        <div className="rpt-p1-section-title">WHAT YOUR SCORE MEANS</div>
+        <div className="rpt-p1-tiers-grid">
+          {TIERS.map((t) => (
+            <div key={t.name} className="rpt-p1-tier-card" style={{ borderLeftColor: TIER_COLORS[t.name], background: tier.name === t.name ? "#f9fafb" : "#fff" }}>
+              <div className="rpt-p1-tier-card-name" style={{ color: TIER_COLORS[t.name] }}>{t.name.toUpperCase()}</div>
+              <div className="rpt-p1-tier-card-range">{t.min} – {t.max}</div>
+              <div className="rpt-p1-tier-card-desc">{t.description}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="rpt-p1-section-title" style={{ marginTop: 20 }}>AUDIT OVERVIEW</div>
+        <div className="rpt-p1-overview-row">
+          <div className="rpt-p1-overview-box">
+            <div className="rpt-p1-overview-val">{total}</div>
+            <div className="rpt-p1-overview-lbl">Total Points Scored</div>
+          </div>
+          <div className="rpt-p1-overview-box">
+            <div className="rpt-p1-overview-val">{maxTotal}</div>
+            <div className="rpt-p1-overview-lbl">Maximum Possible</div>
+          </div>
+          <div className="rpt-p1-overview-box">
+            <div className="rpt-p1-overview-val">{questions.length}</div>
+            <div className="rpt-p1-overview-lbl">Questions Answered</div>
+          </div>
+          <div className="rpt-p1-overview-box">
+            <div className="rpt-p1-overview-val" style={{ color: TIER_COLORS[tier.name] }}>{score}%</div>
+            <div className="rpt-p1-overview-lbl">Performance Score</div>
+          </div>
+        </div>
+
+        <CompanyFooter />
       </div>
-      <div className="print-disclaimer">
-        This audit is for informational and educational purposes only and does not constitute medical advice. Always consult a qualified professional.
+
+      {/* ══════ PAGE 2 : Q1–10 ══════ */}
+      <div className="rpt-page">
+        <ReportLogo page={2} />
+        <div className="rpt-p2-title">DETAILED BREAKDOWN — QUESTIONS 1 TO 10</div>
+        <div className="rpt-p2-sub">Each question rated 1 (Strongly Disagree) to 5 (Strongly Agree). Score bar shows your rating as a proportion of the maximum.</div>
+        <div className="rpt-qlist">
+          {page1Qs.map((q, i) => (
+            <QuestionRow key={i} q={q} i={i} ans={answers[i]} />
+          ))}
+        </div>
+        <CompanyFooter />
       </div>
+
+      {/* ══════ PAGE 3 : Q11–20 + Disclaimer ══════ */}
+      <div className="rpt-page">
+        <ReportLogo page={3} />
+        <div className="rpt-p2-title">DETAILED BREAKDOWN — QUESTIONS 11 TO 20</div>
+        <div className="rpt-p2-sub">Continued from page 2.</div>
+        <div className="rpt-qlist">
+          {page2Qs.map((q, i) => (
+            <QuestionRow key={i} q={q} i={i + 10} ans={answers[i + 10]} />
+          ))}
+        </div>
+        <CompanyFooter withDisclaimer />
+      </div>
+
     </div>
   );
 }

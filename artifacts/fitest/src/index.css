@@ -230,197 +230,389 @@
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    box-sizing: border-box;
   }
 
-  body {
+  html, body {
     background: #ffffff !important;
     color: #0a0a0a !important;
-    font-family: Inter, sans-serif;
-  }
-
-  .print-report {
-    display: block !important;
-    padding: 48px;
-    max-width: 740px;
-    margin: 0 auto;
-  }
-
-  .print-header {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-bottom: 32px;
-    border-bottom: 2px solid #0a0a0a;
-    padding-bottom: 16px;
-  }
-
-  .print-logo-f {
-    font-size: 28px;
-    font-weight: 900;
-    color: #65a30d;
-    letter-spacing: -1px;
-  }
-
-  .print-logo-text {
-    font-size: 28px;
-    font-weight: 900;
-    color: #0a0a0a;
-    letter-spacing: -1px;
-  }
-
-  .print-meta {
-    font-size: 12px;
-    color: #555;
-    margin-bottom: 4px;
-    letter-spacing: 0.02em;
-  }
-
-  .print-audit-title {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #0a0a0a;
-    margin-bottom: 24px;
-  }
-
-  .print-score-block {
-    margin-bottom: 20px;
-  }
-
-  .print-score {
-    font-size: 80px;
-    font-weight: 900;
-    line-height: 1;
-    color: #0a0a0a;
-    letter-spacing: -3px;
-  }
-
-  .print-tier-label {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    color: #555;
-    margin-top: 8px;
-  }
-
-  .print-tier-bar {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 16px;
-  }
-
-  .print-tier-bar span {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #aaa;
-  }
-
-  .print-tier-active {
-    color: #65a30d !important;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  .print-description {
-    font-size: 13px;
-    color: #333;
-    line-height: 1.6;
-    margin-bottom: 32px;
-    font-style: italic;
-  }
-
-  .print-breakdown-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: #0a0a0a;
-    margin-bottom: 4px;
-  }
-
-  .print-breakdown-sub {
-    font-size: 11px;
-    color: #888;
-    margin-bottom: 16px;
-  }
-
-  .print-questions {
-    border-top: 1px solid #e5e7eb;
-  }
-
-  .print-question-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid #f3f4f6;
-    font-size: 12px;
-  }
-
-  .print-q-num {
-    color: #aaa;
-    width: 20px;
-    shrink: 0;
-    padding-top: 1px;
-  }
-
-  .print-q-text {
-    flex: 1;
-    color: #333;
-    line-height: 1.5;
-  }
-
-  .print-q-score {
-    font-weight: 700;
-    color: #65a30d;
-    width: 28px;
-    text-align: right;
-    shrink: 0;
-  }
-
-  .print-page-break {
-    page-break-after: always;
-    break-after: page;
-    height: 0;
+    font-family: Inter, 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
   }
 
-  .print-page-2-header {
+  nav, header, footer, .print-hidden {
+    display: none !important;
+  }
+
+  /* ── Report wrapper ── */
+  .rpt {
+    display: block !important;
+  }
+
+  /* Each page is a block that breaks after itself */
+  .rpt-page {
+    page-break-after: always;
+    break-after: page;
+    padding: 44px 52px 36px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+  }
+
+  .rpt-page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* ── Header (logo + page info) — every page ── */
+  .rpt-header {
     display: flex;
     align-items: center;
-    gap: 2px;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e5e7eb;
+    justify-content: space-between;
+    border-bottom: 2px solid #0a0a0a;
     padding-bottom: 12px;
-    padding-top: 4px;
+    margin-bottom: 20px;
   }
 
-  .print-disclaimer {
-    margin-top: 40px;
-    padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
+  .rpt-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0;
+  }
+
+  .rpt-logo-f {
+    font-size: 26px;
+    font-weight: 900;
+    color: #65a30d;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .rpt-logo-rest {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0a0a0a;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .rpt-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .rpt-header-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .rpt-header-page {
+    font-size: 10px;
+    color: #bbb;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PAGE 1: Meta row ── */
+  .rpt-p1-meta {
+    display: flex;
+    justify-content: space-between;
     font-size: 11px;
     color: #888;
-    font-style: italic;
-    line-height: 1.6;
+    margin-bottom: 22px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
   }
 
-  .print-company-info {
-    margin-top: 4px;
-    padding-top: 10px;
-    border-top: 1px solid #f3f4f6;
+  /* ── PAGE 1: Score section ── */
+  .rpt-p1-score-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-bottom: 16px;
+    padding: 24px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .rpt-p1-score-left {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .rpt-p1-score-number {
+    font-size: 88px;
+    font-weight: 900;
+    line-height: 1;
+    color: #0a0a0a;
+    letter-spacing: -4px;
+  }
+
+  .rpt-p1-score-denom {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ccc;
+    align-self: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .rpt-p1-score-right {
+    flex: 1;
+    padding-top: 8px;
+  }
+
+  .rpt-p1-tier-badge {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    border: 2px solid;
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin-bottom: 6px;
+  }
+
+  .rpt-p1-tier-range {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .rpt-p1-tier-desc {
+    font-size: 12px;
+    color: #444;
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  /* ── PAGE 1: Gradient bar ── */
+  .rpt-p1-gradient-bar {
+    height: 8px;
+    background: linear-gradient(to right, #ef4444, #f59e0b, #a3e635, #10b981);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 4px;
+    position: relative;
+  }
+
+  .rpt-p1-gradient-fill {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: rgba(255,255,255,0.55);
+  }
+
+  .rpt-p1-tier-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+
+  .rpt-p1-tier-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── PAGE 1: Section title ── */
+  .rpt-p1-section-title {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #0a0a0a;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  /* ── PAGE 1: Tier cards grid ── */
+  .rpt-p1-tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .rpt-p1-tier-card {
+    border-left: 3px solid;
+    padding: 10px 10px 10px 12px;
+    border-radius: 4px;
+    border-top: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .rpt-p1-tier-card-name {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .rpt-p1-tier-card-range {
+    font-size: 10px;
+    color: #999;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .rpt-p1-tier-card-desc {
+    font-size: 10px;
+    color: #555;
+    line-height: 1.45;
+  }
+
+  /* ── PAGE 1: Overview boxes ── */
+  .rpt-p1-overview-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    flex: 1;
+  }
+
+  .rpt-p1-overview-box {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 14px 12px;
+    text-align: center;
+    background: #fafafa;
+  }
+
+  .rpt-p1-overview-val {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0a0a0a;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+
+  .rpt-p1-overview-lbl {
+    font-size: 9px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+  }
+
+  /* ── PAGES 2 & 3: Breakdown title ── */
+  .rpt-p2-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #0a0a0a;
+    margin-bottom: 4px;
+  }
+
+  .rpt-p2-sub {
+    font-size: 10px;
+    color: #999;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  /* ── Question rows ── */
+  .rpt-qlist {
+    flex: 1;
+  }
+
+  .rpt-qrow {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .rpt-qrow-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+
+  .rpt-qrow-num {
+    font-size: 10px;
+    color: #bbb;
+    width: 18px;
+    flex-shrink: 0;
+    padding-top: 1px;
+    font-weight: 700;
+  }
+
+  .rpt-qrow-text {
+    flex: 1;
+    font-size: 11px;
+    color: #333;
+    line-height: 1.45;
+  }
+
+  .rpt-qrow-score {
+    font-size: 11px;
+    font-weight: 800;
+    color: #0a0a0a;
+    width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .rpt-qrow-bar-track {
+    height: 4px;
+    background: #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-left: 26px;
+  }
+
+  .rpt-qrow-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: none;
+  }
+
+  /* ── Footer (every page) ── */
+  .rpt-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .rpt-footer-disclaimer {
+    font-size: 10px;
+    color: #555;
+    line-height: 1.55;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    background: #fef9ec;
+    border-left: 3px solid #f59e0b;
+    border-radius: 2px;
+  }
+
+  .rpt-footer-company {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .rpt-footer-co-name {
     font-size: 10px;
     color: #aaa;
-    line-height: 1.8;
+    line-height: 1.5;
   }
 
-  nav,
-  header,
-  footer,
-  .print-hidden {
-    display: none !important;
+  .rpt-footer-co-contact {
+    font-size: 10px;
+    color: #bbb;
+    text-align: right;
   }
 }
