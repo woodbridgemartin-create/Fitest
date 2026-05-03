@@ -1,16 +1,17 @@
+
 import { Switch, Route } from "wouter";
 
 // Components
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-// Pages - Using lowercase to match standard filesystem defaults
+// Pages
 import Home from "./pages/Home";
 import ForGyms from "./pages/ForGyms";
 import ForBusinesses from "./pages/ForBusinesses";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-import AuditPage from "./pages/audit"; 
+import AuditPage from "./pages/Audit"; // This will work once the file is moved
 import NotFound from "./pages/not-found";
 
 export default function App() {
