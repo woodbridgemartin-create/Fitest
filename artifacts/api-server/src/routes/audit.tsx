@@ -1,20 +1,22 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useSearchParams } from "react-router-dom";
 
-export const Route = createFileRoute("/audit")({
-  component: AuditPage,
-});
-
-function AuditPage() {
-  const params = new URLSearchParams(window.location.search);
+export default function AuditPage() {
+  const [params] = useSearchParams();
   const client = params.get("client");
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>Fitest Audit</h1>
+    <div className="min-h-screen bg-white text-black p-10">
+      <h1 className="text-3xl font-bold mb-4">
+        Fitest Audit
+      </h1>
 
-      <p>Client ID: {client || "Not provided"}</p>
+      <p className="mb-6">
+        Client ID: {client}
+      </p>
 
-      <p>This is where your audit will run.</p>
+      <div className="p-6 border rounded-lg">
+        <p>Audit will load here</p>
+      </div>
     </div>
   );
 }
