@@ -141,7 +141,7 @@ function PrintReport({ entryId, department, auditPath, questions, answers, score
             <div key={t.name} className="rpt-p1-tier-card" style={{ borderLeftColor: TIER_COLORS[t.name], background: tier.name === t.name ? "#f9fafb" : "#fff" }}>
               <div className="rpt-p1-tier-card-name" style={{ color: TIER_COLORS[t.name] }}>{t.name.toUpperCase()}</div>
               <div className="rpt-p1-tier-card-range">{t.min} – {t.max}</div>
-              <div className="rpt-p1-tier-card-desc">{t.description}</div>
+            <div className="rpt-p1-tier-card-desc">{t.description}</div>
             </div>
           ))}
         </div>

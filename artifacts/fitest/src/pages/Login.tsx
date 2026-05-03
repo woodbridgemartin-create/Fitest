@@ -36,7 +36,7 @@ export default function Login() {
         email.toLowerCase() === DEMO_EMAIL &&
         password === DEMO_PASS
       ) {
-        localStorage.setItem("fitest_auth", JSON.stringify({ email: DEMO_EMAIL }));
+        localStorage.setItem("fitest_auth", "true");
         localStorage.setItem("fitest_org", JSON.stringify({ name: "Demo Gym", type: "gym", clientId: "DEMO123" }));
         navigate("/dashboard");
       } else {

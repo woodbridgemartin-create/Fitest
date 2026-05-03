@@ -497,16 +497,9 @@ export default function Dashboard() {
     const demo   = params.get("demo");
     const raw    = localStorage.getItem("fitest_auth");
     if (!raw && demo !== "1") { navigate("/login"); return; }
-    let detectedEmail = "";
-    if (raw && raw !== "true") {
-      try {
-        const { email } = JSON.parse(raw);
-        if (email) { setUserEmail(email); detectedEmail = email; }
-        else if (demo !== "1") { navigate("/login"); return; }
-      } catch { if (demo !== "1") { navigate("/login"); return; } }
-    }
-    const demoMode = demo === "1" || detectedEmail === "demo@fitest.co.uk";
+    const demoMode = raw === "true" || demo === "1";
     setIsDemo(demoMode);
+    setUserEmail(demoMode ? "demo@fitest.co.uk" : "");
 
     const orgRaw = localStorage.getItem("fitest_org");
     if (orgRaw) {
@@ -530,9 +523,7 @@ export default function Dashboard() {
     if (demoMode) {
       setClientId("DEMO123");
       setMode("gym");
-      if (!orgRaw) {
-        setOrgName("Demo Gym");
-      }
+      setOrgName("Demo Gym");
       try {
         const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
         setLiveResults(all.filter(r => r.clientId === "DEMO123"));
@@ -603,11 +594,11 @@ export default function Dashboard() {
 
   /* ── Performing + Elite count ────────────────────────── */
   const bizGoodCount = useMemo(() =>
-    filteredBiz.filter(s => s.tier === "Performing" || s.tier === "Elite").length,
-  [filteredBiz]);
+    isDemo ? 25 : filteredBiz.filter(s => s.tier === "Performing" || s.tier === "Elite").length,
+  [filteredBiz, isDemo]);
   const gymGoodCount = useMemo(() =>
-    filteredGym.filter(s => s.tier === "Performing" || s.tier === "Elite").length,
-  [filteredGym]);
+    isDemo ? 25 : filteredGym.filter(s => s.tier === "Performing" || s.tier === "Elite").length,
+  [filteredGym, isDemo]);
 
   function handleSignOut() {
     localStorage.removeItem("fitest_auth");
