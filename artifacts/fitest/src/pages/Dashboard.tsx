@@ -447,6 +447,7 @@ export default function Dashboard() {
   const [isDemo, setIsDemo]         = useState(false);
   const [generating, setGenerating] = useState(false);
   const [affiliateCopied, setAffiliateCopied] = useState(false);
+  const [affiliateSetupCopied, setAffiliateSetupCopied] = useState(false);
 
   const auditLink = clientId
     ? `https://fitest.co.uk/audit?client=${clientId}`
@@ -455,6 +456,7 @@ export default function Dashboard() {
   const affiliateMetrics = isDemo
     ? { referrals: 10, conversions: 3, earnings: 149.4 }
     : AFFILIATE_METRICS;
+  const affiliateTestLink = clientId ? `${window.location.origin}/?ref=${clientId}` : "";
 
   function handleCopyLink() {
     if (!auditLink) return;
@@ -486,10 +488,19 @@ export default function Dashboard() {
   }
 
   function handleCopyAffiliateLink() {
-    if (!affiliateLink) return;
-    navigator.clipboard.writeText(affiliateLink).catch(() => {});
+    if (!affiliateTestLink) return;
+    localStorage.setItem("fitest_affiliate", JSON.stringify({ refId: clientId || "DEMO123", test: true }));
+    navigator.clipboard.writeText(affiliateTestLink).catch(() => {});
     setAffiliateCopied(true);
     setTimeout(() => setAffiliateCopied(false), 2500);
+  }
+
+  function handleCreateTestAffiliate() {
+    const refId = clientId || "DEMO123";
+    localStorage.setItem("fitest_affiliate", JSON.stringify({ refId, test: true }));
+    if (affiliateTestLink) navigator.clipboard.writeText(affiliateTestLink).catch(() => {});
+    setAffiliateSetupCopied(true);
+    setTimeout(() => setAffiliateSetupCopied(false), 2500);
   }
 
   useEffect(() => {
@@ -697,11 +708,21 @@ export default function Dashboard() {
               >
                 {affiliateCopied ? "Copied!" : "Copy Affiliate Link"}
               </button>
+              <button
+                onClick={handleCreateTestAffiliate}
+                className={`shrink-0 h-9 px-4 rounded-xl text-xs font-bold border transition-all duration-200 ${
+                  affiliateSetupCopied
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                    : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-primary"
+                }`}
+              >
+                {affiliateSetupCopied ? "Test Affiliate Ready" : "Create Test Affiliate"}
+              </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="rounded-xl bg-background border border-border px-4 py-3">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Your affiliate link</div>
-                <div className="font-mono text-xs break-all">{affiliateLink || "No link yet"}</div>
+                <div className="font-mono text-xs break-all">{affiliateTestLink || "No link yet"}</div>
               </div>
               <div className="rounded-xl bg-background border border-border px-4 py-3">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Commission rate</div>

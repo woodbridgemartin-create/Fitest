@@ -349,6 +349,12 @@ export default function Home() {
       }
       const prev = JSON.parse(localStorage.getItem("fitest_results") || "[]");
       localStorage.setItem("fitest_results", JSON.stringify([record, ...prev]));
+      if (clientId) {
+        localStorage.setItem(
+          `fitest_demo_result_${clientId}`,
+          JSON.stringify(record)
+        );
+      }
     } catch { /* non-critical */ }
   };
 
