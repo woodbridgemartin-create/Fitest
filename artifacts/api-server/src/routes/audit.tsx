@@ -1,21 +1,17 @@
-import { useSearchParams } from "react-router-dom";
-
+// src/routes/audit.tsx
 export default function AuditPage() {
-  const [params] = useSearchParams();
-  const client = params.get("client");
+  // This looks at the URL for ?client=XYZ
+  const params = new URLSearchParams(window.location.search);
+  const client = params.get("client") || "Unknown Client";
 
   return (
-    <div className="min-h-screen bg-white text-black p-10">
-      <h1 className="text-3xl font-bold mb-4">
-        Fitest Audit
-      </h1>
-
-      <p className="mb-6">
-        Client ID: {client}
+    <div style={{ padding: '40px', fontFamily: 'sans-serif', textAlign: 'center' }}>
+      <h1 style={{ fontSize: '2rem', fontWeight: 'bold' }}>FITEST Audit System</h1>
+      <p style={{ marginTop: '20px' }}>
+        <strong>Current Client:</strong> {client}
       </p>
-
-      <div className="p-6 border rounded-lg">
-        <p>Audit will load here</p>
+      <div style={{ marginTop: '30px', border: '2px dashed #ccc', padding: '50px' }}>
+        Audit form components will be injected here.
       </div>
     </div>
   );
