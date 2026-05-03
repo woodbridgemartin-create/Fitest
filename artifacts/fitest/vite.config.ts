@@ -1,6 +1,18 @@
+import { defineConfig } from "vite"; // This line was likely missing or corrupted
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+
+// Handle the Port
+const rawPort = process.env.PORT || "3000"; 
+const port = Number(rawPort);
+
+// Handle the Base Path (Fixes the blank screen issue)
+const basePath = process.env.BASE_PATH || "/";
+
 export default defineConfig({
-  // Use the environment variable if it exists, otherwise default to root '/'
-  base: process.env.BASE_PATH || "/", 
+  base: basePath, 
   plugins: [
     react(),
     tailwindcss(),
@@ -30,8 +42,20 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
-    // Add this to ensure assets are handled correctly
     assetsDir: "assets",
   },
-  // ... keep the rest of your server/preview settings
+  server: {
+    port,
+    strictPort: true,
+    host: "0.0.0.0",
+    allowedHosts: true,
+    fs: {
+      strict: true,
+    },
+  },
+  preview: {
+    port,
+    host: "0.0.0.0",
+    allowedHosts: true,
+  },
 });
