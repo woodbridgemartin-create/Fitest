@@ -1,8 +1,8 @@
 import { Switch, Route } from "wouter";
 
-// Layout Components
-import Header from "./components/ui/Header";
-import Footer from "./components/ui/Footer";
+// Standardizing paths - removing the '/ui' subfolder 
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 // Pages
 import Home from "./pages/Home";
@@ -10,8 +10,7 @@ import ForGyms from "./pages/ForGyms";
 import ForBusinesses from "./pages/ForBusinesses";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-// Changed this to look for a specific file name; ensure your file is named Audit.tsx
-import AuditPage from "./pages/Audit"; 
+import AuditPage from "./pages/Audit"; // Assuming Capital 'A'
 import NotFound from "./pages/not-found";
 
 export default function App() {
