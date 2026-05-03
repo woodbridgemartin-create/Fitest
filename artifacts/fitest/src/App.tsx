@@ -27,7 +27,8 @@ function Router() {
     location === "/login" ||
     location === "/dashboard" ||
     location === "/demo" ||
-    location === "/onboarding";
+    location === "/onboarding" ||
+    location.startsWith("/audit");
 
   if (isStandalone) {
     return (
@@ -36,6 +37,7 @@ function Router() {
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/demo" component={Demo} />
         <Route path="/onboarding" component={Onboarding} />
+        <Route path="/audit" component={Home} />
       </Switch>
     );
   }

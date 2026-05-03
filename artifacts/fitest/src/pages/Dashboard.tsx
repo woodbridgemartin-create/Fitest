@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useLocation, Link } from "wouter";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -449,11 +449,11 @@ export default function Dashboard() {
   const [affiliateCopied, setAffiliateCopied] = useState(false);
 
   const auditLink = clientId
-    ? `https://fitest.co.uk/?client=${clientId}&audit=${mode}`
+    ? `https://fitest.co.uk/audit?client=${clientId}`
     : "";
   const affiliateLink = clientId ? `https://fitest.co.uk/?ref=${clientId}` : "";
   const affiliateMetrics = isDemo
-    ? { referrals: 8, conversions: 2, earnings: 99.6 }
+    ? { referrals: 10, conversions: 3, earnings: 149.4 }
     : AFFILIATE_METRICS;
 
   function handleCopyLink() {
@@ -539,6 +539,27 @@ export default function Dashboard() {
       } catch { /* ignore */ }
     }
   }, [navigate]);
+
+  /* ── Real-time results sync ──────────────────────────── */
+  const clientIdRef = useRef(clientId);
+  useEffect(() => { clientIdRef.current = clientId; }, [clientId]);
+
+  useEffect(() => {
+    function refreshResults() {
+      const cid = clientIdRef.current;
+      if (!cid) return;
+      try {
+        const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
+        setLiveResults(all.filter(r => r.clientId === cid));
+      } catch { /* ignore */ }
+    }
+    window.addEventListener("storage", refreshResults);
+    window.addEventListener("focus", refreshResults);
+    return () => {
+      window.removeEventListener("storage", refreshResults);
+      window.removeEventListener("focus", refreshResults);
+    };
+  }, []);
 
   /* ── Period cutoff ───────────────────────────────────── */
   const cutoff = useMemo(() => {
