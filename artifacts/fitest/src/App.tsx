@@ -1,8 +1,8 @@
 import { Switch, Route } from "wouter";
 
-// Layout Components - Adding .tsx explicitly to help the build resolver
-import Header from "./components/ui/Header.tsx";
-import Footer from "./components/ui/Footer.tsx";
+// Attempting direct component imports
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 // Pages
 import Home from "./pages/Home";
