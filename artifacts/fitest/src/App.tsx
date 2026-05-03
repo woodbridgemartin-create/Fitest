@@ -2,7 +2,7 @@ import { Switch, Route } from "wouter";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-// Pages - Ensure these files exist in your src/pages folder
+// Main Pages
 import Home from "./pages/Home";
 import ForBusinesses from "./pages/ForBusinesses";
 import ForGyms from "./pages/ForGyms";
@@ -13,12 +13,16 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Demo from "./pages/Demo";
 
-// Placeholder components for legal links if you don't have separate files yet
-const LegalPage = ({ title }: { title: string }) => (
+// This component ensures the content ACTUALLY shows up when clicked
+const LegalPageContainer = ({ title, body }: { title: string; body: string }) => (
   <div className="min-h-screen bg-background pt-32 pb-20 px-6">
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl font-black mb-8">{title}</h1>
-      <p className="text-muted-foreground">This page is under review. Please check back shortly for the full {title} documentation.</p>
+      <h1 className="text-3xl font-black mb-8 tracking-tight">{title}</h1>
+      <div className="prose prose-invert">
+        <p className="text-muted-foreground leading-relaxed text-lg">
+          {body}
+        </p>
+      </div>
     </div>
   </div>
 );
@@ -29,37 +33,48 @@ export default function App() {
       <Header />
       <main className="flex-grow">
         <Switch>
-          {/* Main Navigation - Matches your Header.tsx exactly */}
           <Route path="/" component={Home} />
           <Route path="/for-businesses" component={ForBusinesses} />
           <Route path="/for-gyms" component={ForGyms} />
           <Route path="/faq" component={FAQ} />
           <Route path="/contact" component={Contact} />
-
-          {/* Core App Logic */}
           <Route path="/audit" component={AuditPage} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/login" component={Login} />
           <Route path="/demo" component={Demo} />
 
-          {/* Legal Links - Fixing the Footer 404s */}
-          <Route path="/privacy">
-            <LegalPage title="Privacy Policy" />
-          </Route>
-          <Route path="/terms">
-            <LegalPage title="Terms & Conditions" />
-          </Route>
-          <Route path="/gdpr">
-            <LegalPage title="GDPR" />
-          </Route>
-          <Route path="/medical-disclaimer">
-            <LegalPage title="Medical Disclaimer" />
+          {/* Legal Routes - Matched exactly to your Footer code */}
+          <Route path="/privacy-policy">
+            <LegalPageContainer 
+              title="Privacy Policy" 
+              body="At Fitest (Leadsopedia Limited), we take your data seriously. This policy explains how we collect and process performance metrics while maintaining strict user confidentiality." 
+            />
           </Route>
 
-          {/* Catch-all 404 */}
+          <Route path="/terms">
+            <LegalPageContainer 
+              title="Terms & Conditions" 
+              body="By accessing Fitest, you agree to our platform terms. Our licensing for businesses and gyms is governed by the laws of England and Wales." 
+            />
+          </Route>
+
+          <Route path="/gdpr">
+            <LegalPageContainer 
+              title="GDPR Compliance" 
+              body="We are committed to data protection. All audit responses are handled in compliance with GDPR standards, ensuring right to access and right to erasure." 
+            />
+          </Route>
+
+          <Route path="/medical-disclaimer">
+            <LegalPageContainer 
+              title="Medical Disclaimer" 
+              body="Fitest is a performance benchmarking tool. The scores provided are for intelligence and readiness purposes and do not constitute medical advice or diagnosis." 
+            />
+          </Route>
+
           <Route>
-            <div className="min-h-[60vh] flex items-center justify-center">
-              <h1 className="text-2xl font-bold">404 - Page Not Found</h1>
+            <div className="min-h-[60vh] flex flex-col items-center justify-center">
+              <h1 className="text-xl font-bold">404 - Page Not Found</h1>
             </div>
           </Route>
         </Switch>
