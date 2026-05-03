@@ -1,2 +1,2 @@
 /audit    /index.html    200
-/*        /index.html    200
+/:splat   /index.html    200
