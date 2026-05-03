@@ -489,7 +489,7 @@ export default function Dashboard() {
 
   function handleCopyAffiliateLink() {
     if (!affiliateTestLink) return;
-    localStorage.setItem("fitest_affiliate", JSON.stringify({ refId: clientId || "DEMO123", test: true }));
+    localStorage.setItem("fitest_affiliate", JSON.stringify({ refId: clientId || "DEMO123", test: true, source: "dashboard" }));
     navigator.clipboard.writeText(affiliateTestLink).catch(() => {});
     setAffiliateCopied(true);
     setTimeout(() => setAffiliateCopied(false), 2500);
@@ -497,7 +497,7 @@ export default function Dashboard() {
 
   function handleCreateTestAffiliate() {
     const refId = clientId || "DEMO123";
-    localStorage.setItem("fitest_affiliate", JSON.stringify({ refId, test: true }));
+    localStorage.setItem("fitest_affiliate", JSON.stringify({ refId, test: true, source: "dashboard" }));
     if (affiliateTestLink) navigator.clipboard.writeText(affiliateTestLink).catch(() => {});
     setAffiliateSetupCopied(true);
     setTimeout(() => setAffiliateSetupCopied(false), 2500);
@@ -536,8 +536,13 @@ export default function Dashboard() {
       setMode("gym");
       setOrgName("Demo Gym");
       try {
-        const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
-        setLiveResults(all.filter(r => r.clientId === "DEMO123"));
+        const demoResult = localStorage.getItem("fitest_demo_result_DEMO123");
+        if (demoResult) {
+          setLiveResults([JSON.parse(demoResult)]);
+        } else {
+          const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
+          setLiveResults(all.filter(r => r.clientId === "DEMO123"));
+        }
       } catch { /* ignore */ }
     }
   }, [navigate]);

@@ -268,6 +268,14 @@ export default function Home() {
       setConsentMedical(false);
       setConsentPrivacy(false);
       setPhase("consent");
+      return;
+    }
+    const storedAudit = localStorage.getItem("fitest_demo_audit");
+    if (storedAudit === "business" || storedAudit === "gym") {
+      setAuditPath(storedAudit as AuditPath);
+      setConsentMedical(false);
+      setConsentPrivacy(false);
+      setPhase("consent");
     }
   }, []);
 
@@ -276,6 +284,7 @@ export default function Home() {
 
   const handleSelectAudit = (path: AuditPath) => {
     setAuditPath(path);
+    try { localStorage.setItem("fitest_demo_audit", path); } catch { /* non-critical */ }
     setConsentMedical(false);
     setConsentPrivacy(false);
     setPhase("consent");
@@ -355,6 +364,7 @@ export default function Home() {
           JSON.stringify(record)
         );
       }
+      try { localStorage.setItem("fitest_demo_audit", auditPath || ""); } catch { /* non-critical */ }
     } catch { /* non-critical */ }
   };
 
