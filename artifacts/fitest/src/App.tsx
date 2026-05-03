@@ -1,3 +1,4 @@
+
 import { Switch, Route } from "wouter";
 
 // Components
@@ -10,9 +11,10 @@ import ForGyms from "./pages/ForGyms";
 import ForBusinesses from "./pages/ForBusinesses";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-import AuditPage from "./pages/Audit";
-import Login from "./pages/Login"; // Added
-import Demo from "./pages/Demo";   // Added
+import AuditPage from "./pages/Audit"; 
+import Login from "./pages/Login"; 
+import Demo from "./pages/Demo";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/not-found";
 
 export default function App() {
@@ -31,8 +33,9 @@ export default function App() {
           {/* Access Platform Routes */}
           <Route path="/login" component={Login} />
           <Route path="/demo" component={Demo} />
+          <Route path="/contact" component={Contact} />
 
-          {/* Fallback */}
+          {/* Catch-all 404 */}
           <Route component={NotFound} />
         </Switch>
       </main>
