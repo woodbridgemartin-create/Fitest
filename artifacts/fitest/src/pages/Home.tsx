@@ -48,7 +48,7 @@ function PrintReport({ entryId, department, auditPath, questions, answers, score
   const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const page1Qs = questions.slice(0, 10);
   const page2Qs = questions.slice(10);
-  const total = answers.reduce((a, b) => a + (b ?? 0), 0);
+  const total = answers.reduce((a: number, b) => a + (b ?? 0), 0);
   const maxTotal = questions.length * 5;
 
   const ReportLogo = ({ page }: { page: number }) => (
@@ -213,6 +213,12 @@ const HOW_IT_WORKS = [
   { step: "03", title: "Receive Tiered Performance Data", body: "Each participant receives a score from 0 to 100 and a performance tier. Organisations access aggregated insights across departments or membership groups." },
 ];
 
+const AFFILIATE_PARTNER = [
+  { label: "Earn 20% per Business licence sale (£249)", value: "£49.80" },
+  { label: "Paid monthly on the 1st", value: "Automatic" },
+  { label: "No limits on referrals", value: "Unlimited" },
+];
+
 const PILLARS = [
   { label: "Energy", desc: "Stable, sustained energy across the day without crashes or reliance on stimulants." },
   { label: "Recovery", desc: "Sleep quality, stress resilience and the ability to bounce back after exertion or pressure." },
@@ -308,7 +314,7 @@ export default function Home() {
       hasError = true;
     }
     if (hasError) return;
-    const total = answers.reduce((a, b) => a + (b ?? 0), 0);
+    const total = answers.reduce((a: number, b) => a + (b ?? 0), 0);
     const score = Math.round((total / (questions.length * 5)) * 100);
     const entryId = "ENT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
     setPrintEntryId(entryId);
@@ -675,6 +681,58 @@ export default function Home() {
                     All licences include a commercial use agreement. To discuss volume pricing or custom deployments, email{" "}
                     <a href="mailto:hello@fitest.co.uk" className="text-muted-foreground/60 hover:text-primary transition-colors">hello@fitest.co.uk</a>.
                   </p>
+                </div>
+              </section>
+
+              {/* Affiliate programme */}
+              <section className="py-20 px-4 border-b border-border/30">
+                <div className="container mx-auto max-w-4xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div>
+                      <p className="text-xs uppercase tracking-widest font-semibold text-primary mb-3">Affiliate Programme</p>
+                      <h2 className="text-3xl md:text-4xl font-black mb-4 leading-tight">Become an Affiliate Partner</h2>
+                      <p className="text-muted-foreground leading-relaxed mb-4">
+                        Turn your network into revenue.
+                      </p>
+                      <p className="text-muted-foreground leading-relaxed mb-6">
+                        If you are a gym, coach, or consultant, you can earn commission by referring businesses to Fitest.
+                      </p>
+                      <div className="space-y-3 mb-8">
+                        {AFFILIATE_PARTNER.map((item) => (
+                          <div key={item.label} className="flex items-center justify-between gap-4 bg-card border border-card-border rounded-xl px-4 py-3">
+                            <span className="text-sm text-muted-foreground">{item.label}</span>
+                            <span className="text-sm font-bold text-primary">{item.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <a href="/contact">
+                        <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-full px-6">
+                          Become a Partner
+                        </Button>
+                      </a>
+                    </div>
+                    <div className="bg-card border border-card-border rounded-2xl p-6">
+                      <div className="text-xs uppercase tracking-widest font-semibold text-muted-foreground mb-3">Commission details</div>
+                      <div className="space-y-4">
+                        <div className="rounded-xl border border-border/50 bg-background p-4">
+                          <div className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Affiliate link</div>
+                          <div className="font-mono text-xs break-all text-foreground">fitest.co.uk/?ref=GYM_ID</div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          {[
+                            { label: "Rate", value: "20%" },
+                            { label: "Sale value", value: "£249" },
+                            { label: "Payout", value: "1st monthly" },
+                          ].map((item) => (
+                            <div key={item.label} className="rounded-xl border border-border/50 bg-background p-4 text-center">
+                              <div className="text-xs text-muted-foreground uppercase tracking-widest mb-1">{item.label}</div>
+                              <div className="text-lg font-black">{item.value}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </section>
 

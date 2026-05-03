@@ -8,6 +8,7 @@ type Period   = "7d" | "30d" | "all";
 
 type LiveResult = {
   clientId: string;
+  refId?: string;
   entryId?: string;
   score: number;
   tier: string;
@@ -103,6 +104,12 @@ const GYM_SUPPORT = [
   { entryId: "ENT-P7Q8R9", email: "user6@example.com",     score: 33, tier: "Exposed"  as TierName, date: "26 Apr" },
   { entryId: "ENT-S1T2U3", email: "member7@fitness.co.uk", score: 21, tier: "Critical" as TierName, date: "25 Apr" },
 ];
+
+const AFFILIATE_METRICS = {
+  referrals: 12,
+  conversions: 3,
+  earnings: 149.4,
+};
 
 /* ─── Utilities ──────────────────────────────────────── */
 function fmtDate(d: Date) {
@@ -439,10 +446,15 @@ export default function Dashboard() {
   const [linkCopied, setLinkCopied] = useState(false);
   const [isDemo, setIsDemo]         = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [affiliateCopied, setAffiliateCopied] = useState(false);
 
   const auditLink = clientId
     ? `https://fitest.co.uk/?client=${clientId}&audit=${mode}`
     : "";
+  const affiliateLink = clientId ? `https://fitest.co.uk/?ref=${clientId}` : "";
+  const affiliateMetrics = isDemo
+    ? { referrals: 8, conversions: 2, earnings: 99.6 }
+    : AFFILIATE_METRICS;
 
   function handleCopyLink() {
     if (!auditLink) return;
@@ -473,6 +485,13 @@ export default function Dashboard() {
     }, 600);
   }
 
+  function handleCopyAffiliateLink() {
+    if (!affiliateLink) return;
+    navigator.clipboard.writeText(affiliateLink).catch(() => {});
+    setAffiliateCopied(true);
+    setTimeout(() => setAffiliateCopied(false), 2500);
+  }
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const demo   = params.get("demo");
@@ -501,6 +520,9 @@ export default function Dashboard() {
             const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
             setLiveResults(all.filter(r => r.clientId === org.clientId));
           } catch { /* ignore */ }
+        }
+        if (org.referrals && Array.isArray(org.referrals)) {
+          // ignore
         }
       } catch { /* ignore */ }
     }
@@ -637,6 +659,59 @@ export default function Dashboard() {
             </div>
           </div>
         </motion.div>
+
+        {mode === "gym" && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.16, duration: 0.4 }}
+            className="bg-card border border-card-border rounded-2xl p-6 mb-6"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+              <div>
+                <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Affiliate Programme</p>
+                <h2 className="text-xl font-black mt-1">Grow revenue from referrals</h2>
+              </div>
+              <button
+                onClick={handleCopyAffiliateLink}
+                className={`shrink-0 h-9 px-4 rounded-xl text-xs font-bold border transition-all duration-200 ${
+                  affiliateCopied
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                    : "bg-primary text-primary-foreground border-primary hover:brightness-110 active:brightness-90"
+                }`}
+              >
+                {affiliateCopied ? "Copied!" : "Copy Affiliate Link"}
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="rounded-xl bg-background border border-border px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Your affiliate link</div>
+                <div className="font-mono text-xs break-all">{affiliateLink || "No link yet"}</div>
+              </div>
+              <div className="rounded-xl bg-background border border-border px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Commission rate</div>
+                <div className="font-bold">20% per Business licence sale (£249)</div>
+              </div>
+              <div className="rounded-xl bg-background border border-border px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Payout schedule</div>
+                <div className="font-bold">Paid on the 1st of every month</div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+              <div className="rounded-xl bg-background border border-border px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Total referrals</div>
+                <div className="text-2xl font-black">{affiliateMetrics.referrals}</div>
+              </div>
+              <div className="rounded-xl bg-background border border-border px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Total conversions</div>
+                <div className="text-2xl font-black">{affiliateMetrics.conversions}</div>
+              </div>
+              <div className="rounded-xl bg-background border border-border px-4 py-3">
+                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-1">Earnings balance</div>
+                <div className="text-2xl font-black">£{affiliateMetrics.earnings.toFixed(2)}</div>
+              </div>
+            </div>
+          </motion.div>
+        )}
 
         {/* ── Audit Link Card ───────────────────────────── */}
         <motion.div

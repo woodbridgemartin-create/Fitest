@@ -33,6 +33,9 @@ export default function Login() {
     setLoading(true);
     setTimeout(() => {
       localStorage.setItem("fitest_auth", JSON.stringify({ email }));
+      if (email.toLowerCase() === "demo@fitest.co.uk") {
+        localStorage.setItem("fitest_org", JSON.stringify({ name: "Demo Gym", type: "gym", clientId: "DEMO123" }));
+      }
       navigate("/dashboard");
     }, 600);
   }
