@@ -66,6 +66,23 @@ const FAQS = [
     ],
   },
   {
+    category: "Affiliate Programme",
+    items: [
+      {
+        q: "Do you offer an affiliate programme?",
+        a: "Yes. Gym partners and affiliates can earn 20% commission on every Business licence sale they refer. Payments are made monthly on the 1st.",
+      },
+      {
+        q: "How do I access my affiliate link?",
+        a: "Your affiliate link is available inside your dashboard once you have an active Gym licence.",
+      },
+      {
+        q: "How are referrals tracked?",
+        a: "Each affiliate is given a unique referral link. Any Business licence purchased through that link is automatically tracked and attributed.",
+      },
+    ],
+  },
+  {
     category: "Legal",
     items: [
       {

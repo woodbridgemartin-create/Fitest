@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
 
 const DEMO_EMAIL = "demo@fitest.co.uk";
-const DEMO_PASS  = "demo123";
+const DEMO_PASS = "fitest123";
 
 export default function Login() {
   const [, navigate] = useLocation();
