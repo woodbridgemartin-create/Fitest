@@ -1,16 +1,16 @@
 import { Switch, Route } from "wouter";
 
-// Standardizing paths - removing the '/ui' subfolder 
+// Components
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-// Pages
+// Pages - Using lowercase to match standard filesystem defaults
 import Home from "./pages/Home";
 import ForGyms from "./pages/ForGyms";
 import ForBusinesses from "./pages/ForBusinesses";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-import AuditPage from "./pages/Audit"; // Assuming Capital 'A'
+import AuditPage from "./pages/audit"; 
 import NotFound from "./pages/not-found";
 
 export default function App() {
