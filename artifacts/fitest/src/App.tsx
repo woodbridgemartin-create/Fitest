@@ -1,7 +1,4 @@
-
 import { Switch, Route } from "wouter";
-
-// Components
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -15,27 +12,34 @@ import AuditPage from "./pages/Audit";
 import Login from "./pages/Login"; 
 import Demo from "./pages/Demo";
 import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ"; // Ensure this file exists
 import NotFound from "./pages/not-found";
 
 export default function App() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow pt-20"> 
+      <main className="flex-grow"> 
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/gyms" component={ForGyms} />
-          <Route path="/businesses" component={ForBusinesses} />
+          {/* Matches your Header.tsx exactly */}
+          <Route path="/for-businesses" component={ForBusinesses} />
+          <Route path="/for-gyms" component={ForGyms} />
+          <Route path="/faq" component={FAQ} />
+          <Route path="/contact" component={Contact} />
+          
+          {/* Functional Routes */}
           <Route path="/apply" component={Onboarding} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/audit" component={AuditPage} />
-          
-          {/* Access Platform Routes */}
           <Route path="/login" component={Login} />
           <Route path="/demo" component={Demo} />
-          <Route path="/contact" component={Contact} />
 
-          {/* Catch-all 404 */}
+          {/* Legal Routes for Footer */}
+          <Route path="/medical-disclaimer" component={() => <div>Medical Disclaimer Content</div>} />
+          <Route path="/privacy" component={() => <div>Privacy Policy Content</div>} />
+          <Route path="/terms" component={() => <div>Terms of Service Content</div>} />
+
           <Route component={NotFound} />
         </Switch>
       </main>
