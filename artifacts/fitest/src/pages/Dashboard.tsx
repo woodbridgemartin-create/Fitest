@@ -437,27 +437,58 @@ export default function Dashboard() {
   const [clientId, setClientId]     = useState("");
   const [liveResults, setLiveResults] = useState<LiveResult[]>([]);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isDemo, setIsDemo]         = useState(false);
+  const [generating, setGenerating] = useState(false);
 
-  const auditLink = clientId ? `https://fitest.co.uk/?client=${clientId}` : "";
+  const auditLink = clientId
+    ? `https://fitest.co.uk/?client=${clientId}&audit=${mode}`
+    : "";
 
   function handleCopyLink() {
     if (!auditLink) return;
     navigator.clipboard.writeText(auditLink).catch(() => {});
     setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 2000);
+    setTimeout(() => setLinkCopied(false), 2500);
+  }
+
+  function generateClientId() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  }
+
+  function handleGenerateNewLink() {
+    if (isDemo) return; // demo always uses DEMO123
+    setGenerating(true);
+    setTimeout(() => {
+      const newId = generateClientId();
+      setClientId(newId);
+      setLinkCopied(false);
+      try {
+        const orgRaw = localStorage.getItem("fitest_org");
+        const org = orgRaw ? JSON.parse(orgRaw) : {};
+        org.clientId = newId;
+        localStorage.setItem("fitest_org", JSON.stringify(org));
+      } catch { /* ignore */ }
+      setGenerating(false);
+    }, 600);
   }
 
   useEffect(() => {
-    const demo = new URLSearchParams(window.location.search).get("demo");
-    const raw  = localStorage.getItem("fitest_auth");
+    const params = new URLSearchParams(window.location.search);
+    const demo   = params.get("demo");
+    const raw    = localStorage.getItem("fitest_auth");
     if (!raw && demo !== "1") { navigate("/login"); return; }
+    let detectedEmail = "";
     if (raw && raw !== "true") {
       try {
         const { email } = JSON.parse(raw);
-        if (email) setUserEmail(email);
+        if (email) { setUserEmail(email); detectedEmail = email; }
         else if (demo !== "1") { navigate("/login"); return; }
       } catch { if (demo !== "1") { navigate("/login"); return; } }
     }
+    const demoMode = demo === "1" || detectedEmail === "demo@fitest.co.uk";
+    setIsDemo(demoMode);
+
     const orgRaw = localStorage.getItem("fitest_org");
     if (orgRaw) {
       try {
@@ -471,6 +502,14 @@ export default function Dashboard() {
             setLiveResults(all.filter(r => r.clientId === org.clientId));
           } catch { /* ignore */ }
         }
+      } catch { /* ignore */ }
+    }
+    // Demo mode: always use DEMO123
+    if (demoMode) {
+      setClientId("DEMO123");
+      try {
+        const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
+        setLiveResults(all.filter(r => r.clientId === "DEMO123"));
       } catch { /* ignore */ }
     }
   }, [navigate]);
@@ -599,46 +638,109 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* ── Audit link banner ────────────────────────── */}
-        {auditLink && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.4 }}
-            className="bg-card border border-primary/20 rounded-2xl px-5 py-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3"
-          >
-            <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-7 h-7 rounded-lg bg-primary/15 border border-primary/30 flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+        {/* ── Audit Link Card ───────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.4 }}
+          className="bg-card border border-card-border rounded-2xl p-6 mb-6"
+        >
+          {/* Header row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                <svg className="w-4.5 h-4.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs font-bold text-primary uppercase tracking-widest leading-none mb-0.5">Your Audit Link</p>
-                <p className="text-xs text-muted-foreground">Share this with your {mode === "gym" ? "members" : "team"}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Your Audit Link</p>
+                  {isDemo && (
+                    <span className="text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full px-2 py-0.5">
+                      Demo · ID: DEMO123
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground/60 mt-0.5">
+                  Share with your {mode === "gym" ? "members" : "team"} — results are stored under your account
+                </p>
               </div>
             </div>
-            <div className="flex-1 min-w-0 bg-background border border-border rounded-xl px-3 py-2 font-mono text-xs text-muted-foreground truncate">
-              {auditLink}
+            {!isDemo && (
+              <button
+                onClick={handleGenerateNewLink}
+                disabled={generating}
+                className={`shrink-0 h-9 px-4 rounded-xl text-xs font-bold border transition-all duration-200 flex items-center gap-2 ${
+                  generating
+                    ? "bg-muted text-muted-foreground border-border cursor-not-allowed"
+                    : "bg-card border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                }`}
+              >
+                {generating ? (
+                  <>
+                    <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Generating…
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    Generate New Link
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Link display + copy */}
+          {clientId ? (
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-3 font-mono text-xs text-muted-foreground/80 truncate select-all">
+                {auditLink}
+              </div>
+              <button
+                onClick={handleCopyLink}
+                className={`shrink-0 h-11 sm:h-auto px-5 rounded-xl text-xs font-bold border transition-all duration-200 flex items-center justify-center gap-2 ${
+                  linkCopied
+                    ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                    : "bg-primary text-primary-foreground border-primary hover:brightness-110 active:brightness-90"
+                }`}
+              >
+                {linkCopied ? (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    </svg>
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
+                    </svg>
+                    Copy Link
+                  </>
+                )}
+              </button>
             </div>
-            <button
-              onClick={handleCopyLink}
-              className={`shrink-0 h-8 px-4 rounded-xl text-xs font-bold border transition-all duration-200 ${
-                linkCopied
-                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                  : "bg-primary text-primary-foreground border-primary hover:bg-primary/90"
-              }`}
-            >
-              {linkCopied ? (
-                <span className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  Copied
-                </span>
-              ) : "Copy Link"}
-            </button>
-          </motion.div>
-        )}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-6 gap-3 text-center border border-dashed border-border/40 rounded-xl">
+              <div className="w-9 h-9 rounded-xl bg-muted/40 border border-border flex items-center justify-center">
+                <svg className="w-4.5 h-4.5 text-muted-foreground/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-muted-foreground">No audit link yet</p>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Click "Generate New Link" to create your unique audit link</p>
+              </div>
+            </div>
+          )}
+        </motion.div>
 
         {/* ── Views ────────────────────────────────────── */}
         <AnimatePresence mode="wait">
