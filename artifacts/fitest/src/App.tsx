@@ -1,17 +1,20 @@
-import Home from "./site/Home"; // Adjust path if your home file is named differently
-import AuditPage from "./routes/audit";
+import { Switch, Route } from "wouter";
+import Onboarding from "./pages/Onboarding";
+import Dashboard from "./pages/Dashboard"; // Assume you have this
+import { Toaster } from "@/components/ui/toaster";
 
 function App() {
-  // Get the current URL path (e.g., "/audit")
-  const path = window.location.pathname;
-
-  // If the user is at /audit, show the Audit Page
-  if (path === "/audit") {
-    return <AuditPage />;
-  }
-
-  // Otherwise, show the standard Homepage
-  return <Home />;
+  return (
+    <>
+      <Switch>
+        {/* The onboarding flow is the default entry point */}
+        <Route path="/" component={Onboarding} />
+        <Route path="/dashboard" component={Dashboard} />
+        <Route>404 Page Not Found</Route>
+      </Switch>
+      <Toaster />
+    </>
+  );
 }
 
 export default App;
