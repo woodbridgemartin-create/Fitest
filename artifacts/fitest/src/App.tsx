@@ -1,4 +1,3 @@
-
 import { Switch, Route } from "wouter";
 
 // Components
@@ -11,7 +10,7 @@ import ForGyms from "./pages/ForGyms";
 import ForBusinesses from "./pages/ForBusinesses";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-import AuditPage from "./pages/Audit"; // This will work once the file is moved
+import AuditPage from "./pages/Audit"; // MATCHES YOUR RECENT FILE MOVE
 import NotFound from "./pages/not-found";
 
 export default function App() {
