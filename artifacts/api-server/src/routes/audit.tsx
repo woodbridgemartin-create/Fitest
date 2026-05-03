@@ -1,5 +1,10 @@
+import { createFileRoute } from "@tanstack/react-router";
 
-export default function AuditPage() {
+export const Route = createFileRoute("/audit")({
+  component: AuditPage,
+});
+
+function AuditPage() {
   const params = new URLSearchParams(window.location.search);
   const client = params.get("client");
 
@@ -9,7 +14,7 @@ export default function AuditPage() {
 
       <p>Client ID: {client || "Not provided"}</p>
 
-      <p>This is where your 20-question audit will go.</p>
+      <p>This is where your audit will run.</p>
     </div>
   );
 }
