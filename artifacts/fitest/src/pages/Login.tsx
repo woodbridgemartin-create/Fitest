@@ -6,12 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
 
+const DEMO_EMAIL = "demo@fitest.co.uk";
+const DEMO_PASS  = "demo123";
+
 export default function Login() {
   const [, navigate] = useLocation();
-  const [email, setEmail] = useState("");
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,19 +28,23 @@ export default function Login() {
       setError("Please enter a valid email address.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
 
     setLoading(true);
     setTimeout(() => {
-      localStorage.setItem("fitest_auth", JSON.stringify({ email }));
-      if (email.toLowerCase() === "demo@fitest.co.uk") {
+      if (
+        email.toLowerCase() === DEMO_EMAIL &&
+        password === DEMO_PASS
+      ) {
+        localStorage.setItem("fitest_auth", JSON.stringify({ email: DEMO_EMAIL }));
         localStorage.setItem("fitest_org", JSON.stringify({ name: "Demo Gym", type: "gym", clientId: "DEMO123" }));
+        navigate("/dashboard");
+      } else {
+        setLoading(false);
+        setError(
+          "We don't recognise those credentials. Dashboard access is provided to licensed account holders only — email hello@fitest.co.uk to get set up."
+        );
       }
-      navigate("/dashboard");
-    }, 600);
+    }, 700);
   }
 
   return (
@@ -75,9 +82,6 @@ export default function Login() {
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                <button type="button" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                  Forgot password?
-                </button>
               </div>
               <Input
                 id="password"
@@ -94,7 +98,7 @@ export default function Login() {
               <motion.p
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2"
+                className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 leading-relaxed"
               >
                 {error}
               </motion.p>
@@ -108,6 +112,22 @@ export default function Login() {
               {loading ? "Signing in…" : "Sign in"}
             </Button>
           </form>
+
+          <div className="mt-6 pt-5 border-t border-border/40 text-center">
+            <p className="text-xs text-muted-foreground/60 leading-relaxed">
+              Access is restricted to licensed account holders.
+            </p>
+            <p className="text-xs text-muted-foreground/60 mt-1">
+              To get started,{" "}
+              <a href="mailto:hello@fitest.co.uk" className="text-primary hover:underline">
+                email us
+              </a>{" "}
+              or{" "}
+              <Link href="/#pricing" className="text-primary hover:underline">
+                purchase a licence
+              </Link>.
+            </p>
+          </div>
         </div>
 
         <p className="text-center text-xs text-muted-foreground/50 mt-6">

@@ -48,7 +48,7 @@ function PrintReport({ entryId, department, auditPath, questions, answers, score
   const reportDate = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const page1Qs = questions.slice(0, 10);
   const page2Qs = questions.slice(10);
-  const total = answers.reduce((a: number, b) => a + (b ?? 0), 0);
+  const total = answers.reduce<number>((a, b) => a + (b ?? 0), 0);
   const maxTotal = questions.length * 5;
 
   const ReportLogo = ({ page }: { page: number }) => (
@@ -242,6 +242,7 @@ export default function Home() {
   const [consentMedical, setConsentMedical] = useState(false);
   const [consentPrivacy, setConsentPrivacy] = useState(false);
   const [clientId, setClientId] = useState("");
+  const [refId, setRefId] = useState("");
 
   const topRef = useRef<HTMLDivElement>(null);
   const consentRef = useRef<HTMLDivElement>(null);
@@ -251,6 +252,16 @@ export default function Home() {
     const p = new URLSearchParams(window.location.search);
     const c = p.get("client");
     if (c) setClientId(c);
+    const ref = p.get("ref");
+    if (ref) {
+      setRefId(ref);
+      try { localStorage.setItem("fitest_ref", ref); } catch { /* non-critical */ }
+    } else {
+      try {
+        const stored = localStorage.getItem("fitest_ref");
+        if (stored) setRefId(stored);
+      } catch { /* non-critical */ }
+    }
     const audit = p.get("audit") as AuditPath | null;
     if (audit === "business" || audit === "gym") {
       setAuditPath(audit);
@@ -314,7 +325,7 @@ export default function Home() {
       hasError = true;
     }
     if (hasError) return;
-    const total = answers.reduce((a: number, b) => a + (b ?? 0), 0);
+    const total = answers.reduce<number>((a, b) => a + (b ?? 0), 0);
     const score = Math.round((total / (questions.length * 5)) * 100);
     const entryId = "ENT-" + Math.random().toString(36).substring(2, 8).toUpperCase();
     setPrintEntryId(entryId);
@@ -330,6 +341,7 @@ export default function Home() {
         auditType: auditPath,
         timestamp: new Date().toISOString(),
       };
+      if (refId) record.refId = refId;
       if (auditPath === "business") record.department = department;
       if (auditPath === "gym") {
         record.wantsSupport = wantsSupport;

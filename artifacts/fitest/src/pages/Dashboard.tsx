@@ -526,9 +526,13 @@ export default function Dashboard() {
         }
       } catch { /* ignore */ }
     }
-    // Demo mode: always use DEMO123
+    // Demo mode: always use DEMO123 as a gym account
     if (demoMode) {
       setClientId("DEMO123");
+      setMode("gym");
+      if (!orgRaw) {
+        setOrgName("Demo Gym");
+      }
       try {
         const all: LiveResult[] = JSON.parse(localStorage.getItem("fitest_results") || "[]");
         setLiveResults(all.filter(r => r.clientId === "DEMO123"));
