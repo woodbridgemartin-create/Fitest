@@ -946,10 +946,10 @@ export default function Dashboard() {
 
               {/* Stat tiles */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <StatTile label="Total Members"    value={213}              delay={0.05} sub="registered on platform" />
-                <StatTile label="Audits Completed" value={filteredGym.length} delay={0.10} sub={`${periodLabel}`} />
+                <StatTile label="Total Members"    value={isDemo ? 25 : 213} delay={0.05} sub="registered on platform" />
+                <StatTile label="Audits Completed" value={isDemo ? 25 : filteredGym.length} delay={0.10} sub={`${periodLabel}`} />
                 <StatTile label="Average Score"    value={gymAvg}           delay={0.15} sub="out of 100" />
-                <StatTile label="Support Requests" value={GYM_SUPPORT.length} delay={0.20} sub="pending action" accent />
+                <StatTile label="Support Requests" value={isDemo ? 4 : GYM_SUPPORT.length} delay={0.20} sub="pending action" accent />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -971,7 +971,7 @@ export default function Dashboard() {
                         />
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground/40 mt-3">{filteredGym.length} audits this period</p>
+                    <p className="text-xs text-muted-foreground/40 mt-3">{isDemo ? 25 : filteredGym.length} audits this period</p>
                   </div>
                 </motion.div>
 
@@ -981,7 +981,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between mb-5">
                       <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground">Support Requests</p>
                       <span className="text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 rounded-full px-2.5 py-0.5">
-                        {GYM_SUPPORT.length} pending
+                      {isDemo ? 4 : GYM_SUPPORT.length} pending
                       </span>
                     </div>
                     {/* Column headers */}
