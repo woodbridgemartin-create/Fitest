@@ -1,3 +1,3 @@
-/audit /index.html 200
-/affiliate/* /index.html 200
-/* /index.html 200
+/audit /index 200
+/affiliate/* /index 200
+/* /index 200
