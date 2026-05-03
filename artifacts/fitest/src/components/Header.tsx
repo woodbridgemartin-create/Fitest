@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -19,8 +20,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="w-full px-6 flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-0.5 group">
-          <span className="text-xl font-black text-primary tracking-tighter">F</span>
-          <span className="text-xl font-black tracking-tighter text-foreground">ITEST</span>
+          <img src={fitestLogo} alt="Fitest" className="h-8 w-auto" />
         </Link>
 
         {/* Desktop nav */}

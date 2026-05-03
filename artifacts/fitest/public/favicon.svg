@@ -1,13 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="6" fill="#080c17"/>
-  <text
-    x="16"
-    y="24"
-    text-anchor="middle"
-    font-family="Arial Black, Arial, sans-serif"
-    font-weight="900"
-    font-size="22"
-    fill="#abff1a"
-    letter-spacing="-1"
-  >F</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#000000"/>
+  <path d="M7 8h9.2l-3.1 5H9.8l-1.1 4H13l-1.1 5H6.3L3 24.5 7 8Z" fill="#1f5cff"/>
+  <path d="M16.8 8h6.3l-1.1 5H19l-.8 3h2.6l-1.1 5H17l-1.1 4H10.8l6-17Z" fill="#ffffff"/>
+  <path d="M24.8 8H29l-3.8 17h-4.2l3.8-17Z" fill="#ffffff"/>
 </svg>

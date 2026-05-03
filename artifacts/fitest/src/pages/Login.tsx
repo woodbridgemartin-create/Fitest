@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
+import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
 
 const DEMO_EMAIL = "demo@fitest.co.uk";
 const DEMO_PASS = "fitest123";
@@ -57,9 +58,7 @@ export default function Login() {
       >
         <div className="text-center mb-8">
           <Link href="/">
-            <span className="text-2xl font-black tracking-tight cursor-pointer select-none">
-              <span className="text-primary">F</span>ITEST
-            </span>
+            <img src={fitestLogo} alt="Fitest" className="mx-auto h-20 w-auto cursor-pointer select-none" />
           </Link>
           <p className="text-muted-foreground text-sm mt-2">Sign in to your account</p>
         </div>
