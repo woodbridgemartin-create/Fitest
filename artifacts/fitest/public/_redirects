@@ -1,4 +1,2 @@
 /audit      /index.html  200
-/dashboard  /index.html  200
-/login      /index.html  200
-/*          /index.html  404
+/*          /index.html  200
