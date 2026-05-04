@@ -2,59 +2,48 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
-const rawPort = process.env.PORT || "3000"; 
-const port = Number(rawPort);
+// Get the directory name in a way that works in both local and CI environments
+const projectRoot = path.resolve(process.cwd());
 
 export default defineConfig({
-  base: "/", 
+  // Using relative base ensures assets load regardless of subdomains
+  base: "./", 
+  
   plugins: [
     react(),
-    tailwindcss(),
-    // ONLY use the error overlay in development. 
-    // This prevents the 500 error on production.
-    ...(process.env.NODE_ENV === "development" ? [runtimeErrorOverlay()] : []),
-    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer({
-              root: path.resolve(import.meta.dirname, ".."),
-            }),
-          ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
+    tailwindcss()
   ],
+
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "src"),
-      "@assets": path.resolve(import.meta.dirname, "src/assets"),
+      // Direct mapping of the @ symbol to your src folder
+      "@": path.resolve(projectRoot, "src"),
+      "@assets": path.resolve(projectRoot, "src/assets"),
     },
+    // Helps prevent "Multiple versions of React" errors
     dedupe: ["react", "react-dom"],
   },
-  root: path.resolve(import.meta.dirname),
+
   build: {
     outDir: "dist",
-    emptyOutDir: true,
     assetsDir: "assets",
-    // Set to false to see if it fixes the Cloudflare upload error
-    sourcemap: false, 
+    emptyOutDir: true,
+    sourcemap: false, // Keeps build small and avoids Cloudflare upload warnings
+    rollupOptions: {
+      output: {
+        // Helps with the "Chunks larger than 500kb" warning
+        manualChunks: {
+          vendor: ["react", "react-dom", "framer-motion", "wouter"],
+          ui: ["lucide-react"]
+        }
+      }
+    }
   },
+
   server: {
-    port,
+    port: 3000,
     strictPort: true,
     host: "0.0.0.0",
-    allowedHosts: true,
-    fs: {
-      strict: true,
-    },
-  },
-  preview: {
-    port,
-    host: "0.0.0.0",
-    allowedHosts: true,
-  },
+  }
 });
