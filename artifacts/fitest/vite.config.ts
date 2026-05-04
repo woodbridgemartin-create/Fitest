@@ -1,4 +1,4 @@
-import { defineConfig } from "vite"; // This line was likely missing or corrupted
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
@@ -8,8 +8,8 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 const rawPort = process.env.PORT || "3000"; 
 const port = Number(rawPort);
 
-// Handle the Base Path (Fixes the blank screen issue)
-const basePath = process.env.BASE_PATH || "/";
+// Handle the Base Path (Ensuring root access for Cloudflare)
+const basePath = "/";
 
 export default defineConfig({
   base: basePath, 
@@ -34,15 +34,17 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
-      "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
+      "@assets": path.resolve(import.meta.dirname, "src/assets"),
     },
     dedupe: ["react", "react-dom"],
   },
   root: path.resolve(import.meta.dirname),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    // Fixed: Changed from dist/public to dist
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
     assetsDir: "assets",
+    sourcemap: true, // Useful for debugging that label.tsx error
   },
   server: {
     port,
