@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
@@ -7,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/auditData";
 import type { AuditPath } from "@/lib/auditData";
-import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/audit-data";
-import type { AuditPath } from "@/lib/audit-data";
+import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
 
 type Phase = "landing" | "consent" | "audit" | "email" | "result";
 
@@ -269,14 +269,6 @@ export default function Home() {
       setConsentMedical(false);
       setConsentPrivacy(false);
       setPhase("consent");
-      return;
-    }
-    const storedAudit = localStorage.getItem("fitest_demo_audit");
-    if (storedAudit === "business" || storedAudit === "gym") {
-      setAuditPath(storedAudit as AuditPath);
-      setConsentMedical(false);
-      setConsentPrivacy(false);
-      setPhase("consent");
     }
   }, []);
 
@@ -285,7 +277,6 @@ export default function Home() {
 
   const handleSelectAudit = (path: AuditPath) => {
     setAuditPath(path);
-    try { localStorage.setItem("fitest_demo_audit", path); } catch { /* non-critical */ }
     setConsentMedical(false);
     setConsentPrivacy(false);
     setPhase("consent");
@@ -359,13 +350,6 @@ export default function Home() {
       }
       const prev = JSON.parse(localStorage.getItem("fitest_results") || "[]");
       localStorage.setItem("fitest_results", JSON.stringify([record, ...prev]));
-      if (clientId) {
-        localStorage.setItem(
-          `fitest_demo_result_${clientId}`,
-          JSON.stringify(record)
-        );
-      }
-      try { localStorage.setItem("fitest_demo_audit", auditPath || ""); } catch { /* non-critical */ }
     } catch { /* non-critical */ }
   };
 
