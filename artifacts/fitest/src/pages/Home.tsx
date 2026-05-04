@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, BarChart3, CheckCircle2, ArrowRight } from "
 import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/auditData";
 
 const AuditPath = "/audit";
-export default function Home() {
+
 
 
 
