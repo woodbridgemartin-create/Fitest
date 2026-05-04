@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/auditData";
 import type { AuditPath } from "@/lib/auditData";
-import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
+
 
 type Phase = "landing" | "consent" | "audit" | "email" | "result";
 
@@ -55,7 +55,7 @@ function PrintReport({ entryId, department, auditPath, questions, answers, score
   const ReportLogo = ({ page }: { page: number }) => (
     <div className="rpt-header">
       <div className="rpt-logo">
-        <img src={fitestLogo} alt="Fitest" className="h-10 w-auto" />
+       <span className="text-xl font-black tracking-tighter">FITEST</span>
       </div>
       <div className="rpt-header-right">
         <span className="rpt-header-label">{label}</span>
