@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 // Commented out the missing asset to allow the build to pass
-// import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
+
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -26,9 +26,7 @@ export default function Header() {
           <span className="text-xl font-black tracking-tighter">
             FIT<span className="text-primary">EST</span>
           </span>
-          {/* Restore this once the file is uploaded: 
-          <img src={fitestLogo} alt="Fitest" className="h-8 w-auto" /> 
-          */}
+        
         </Link>
 
         {/* Desktop nav */}
