@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/auditData";
-import type { AuditPath } from "@/lib/auditData";
+import type { /audit } from "@/lib/auditData";
 
 
 type Phase = "landing" | "consent" | "audit" | "email" | "result";
