@@ -1,3 +1,4 @@
+import Logo from "./Logo";
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useLocation, Link } from "wouter";
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion";
@@ -336,47 +337,50 @@ function RecentActivity({ bizSubs, gymSubs, mode }: {
         className="bg-card border border-card-border rounded-2xl p-6 mt-6"
       >
         <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">
-          Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">· last 10 submissions</span>
-        </p>
-        <div className="hidden md:grid grid-cols-[90px_1fr_110px_130px_90px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
-          <span className="text-xs text-muted-foreground/40 font-semibold">Entry ID</span>
-          <span className="text-xs text-muted-foreground/40 font-semibold">Department</span>
-          <span className="text-xs text-muted-foreground/40 font-semibold">Score / Tier</span>
-          <span className="text-xs text-muted-foreground/40 font-semibold">Date</span>
-          <span className="text-xs text-muted-foreground/40 font-semibold text-right">Time</span>
-        </div>
-        <div className="space-y-0.5">
-          {(recent as BizSub[]).map((s, i) => {
-            const c = TIER[s.tier];
-            const entryId = `ENT-${String(s.id + 1).padStart(4, "0")}`;
-            return (
-              <motion.div
-                key={s.id}
-                initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.42 + i * 0.04, duration: 0.3 }}
-                className="grid grid-cols-[90px_1fr_auto] md:grid-cols-[90px_1fr_110px_130px_90px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
-              >
-                <span className="text-xs font-mono text-muted-foreground/50">{entryId}</span>
-                <span className="text-sm font-medium truncate">{s.department}</span>
-                <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-lg ${c.dim} border ${c.border} flex items-center justify-center shrink-0`}>
-                    <span className={`text-xs font-black ${c.text}`}>{s.score}</span>
-                  </div>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
-                    {s.tier}
-                  </span>
-                </div>
-                <span className="text-xs text-muted-foreground/60 hidden md:block tabular-nums">{fmtDate(s.date)}</span>
-                <span className="text-xs text-muted-foreground/40 text-right hidden md:block tabular-nums">{fmtTime(s.date)}</span>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Gym mode
+          // Gym mode
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.38, duration: 0.4 }}
+      className="bg-card border border-card-border rounded-2xl p-6 mt-6"
+    >
+      <p className="text-xs uppercase tracking-widest font-bold text-muted-foreground mb-5">
+        Recent Activity <span className="text-muted-foreground/40 normal-case font-normal tracking-normal">— last 10 submissions</span>
+      </p>
+      <div className="hidden md:grid grid-cols-[40px_1fr_110px_130px_90px] gap-3 px-3 pb-2 border-b border-border/30 mb-1">
+        <span className="text-xs text-muted-foreground/40 font-semibold">Score</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">Entry</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">Tier</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold">Date</span>
+        <span className="text-xs text-muted-foreground/40 font-semibold text-right">Time</span>
+      </div>
+      <div className="space-y-0.5">
+        {(recent as GymSub[]).map((s, i) => {
+          const c = TIER[s.tier];
+          return (
+            <motion.div
+              key={s.id}
+              initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.42 + i * 0.04, duration: 0.3 }}
+              className="grid grid-cols-[40px_1fr_auto] md:grid-cols-[40px_1fr_110px_130px_90px] items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/30 transition-colors"
+            >
+              <div className={`w-9 h-9 rounded-xl ${c.dim} border ${c.border} flex items-center justify-center`}>
+                <span className={`text-xs font-black ${c.text}`}>{s.score}</span>
+              </div>
+              <span className="text-sm font-medium text-muted-foreground/60 tabular-nums">{s.label}</span>
+              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${c.dim} ${c.text} border ${c.border} hidden md:inline-flex w-fit`}>
+                {s.tier}
+              </span>
+              <span className="text-xs text-muted-foreground/60 hidden md:block tabular-nums">{fmtDate(s.date)}</span>
+              <span className="text-xs text-muted-foreground/40 text-right hidden md:block tabular-nums">{fmtTime(s.date)}</span>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+                
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
