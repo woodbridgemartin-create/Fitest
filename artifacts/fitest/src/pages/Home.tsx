@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { ChevronLeft, ChevronRight, BarChart3, CheckCircle2, ArrowRight } from "lucide-react";
 import { BUSINESS_QUESTIONS, GYM_QUESTIONS, TIERS, getTier } from "@/lib/auditData";
 
-// This defines the destination for all your audit buttons
 const AuditPath = "/audit";
+export default function Home() {
 
 
 
