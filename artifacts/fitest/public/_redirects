@@ -1,2 +1,5 @@
+# Ensure assets (JS/CSS) are served directly and not caught by the redirect
 /assets/*  /assets/:splat  200
+
+# Send all other requests to index.html for React/Wouter routing
 /*         /index.html     200
