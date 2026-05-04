@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
-import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
+
+// REMOVED missing asset import to fix build error
+// import fitestLogo from "@assets/ChatGPT_Image_May_3,_2026,_11_24_06_AM_1777803968947.png";
 
 const DEMO_EMAIL = "demo@fitest.co.uk";
 const DEMO_PASS = "fitest123";
@@ -57,8 +59,11 @@ export default function Login() {
         className="w-full max-w-sm"
       >
         <div className="text-center mb-8">
-          <Link href="/">
-            <img src={fitestLogo} alt="Fitest" className="mx-auto h-20 w-auto cursor-pointer select-none" />
+          <Link href="/" className="inline-block group cursor-pointer select-none">
+            {/* Temporary Text Logo to prevent ENOENT build failure */}
+            <span className="text-4xl font-black tracking-tighter">
+              FIT<span className="text-primary">EST</span>
+            </span>
           </Link>
           <p className="text-muted-foreground text-sm mt-2">Sign in to your account</p>
         </div>
