@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { AlertTriangle, ShieldCheck, ChevronRight } from "lucide-react";
-import { BUSINESS_QUESTIONS, GYM_QUESTIONS, getTier } from "@/lib/audit-data";
+import { BUSINESS_QUESTIONS, GYM_QUESTIONS, getTier } from "../lib/auditData";
 
 export default function AuditPage() {
   const [, navigate] = useLocation();
