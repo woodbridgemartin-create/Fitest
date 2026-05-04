@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-
+import Logo from "./Logo";
 // Commented out the missing asset to allow the build to pass
 
 
@@ -18,14 +18,7 @@ export default function Header() {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="w-full px-6 flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-0.5 group">
-          {/* Temporary Text Logo to prevent build failure */}
-          <span className="text-xl font-black tracking-tighter">
-            FIT<span className="text-primary">EST</span>
-          </span>
+  <Logo className="text-xl" />
         
         </Link>
 
