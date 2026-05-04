@@ -4,21 +4,18 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
-// Handle the Port
 const rawPort = process.env.PORT || "3000"; 
 const port = Number(rawPort);
 
-// Handle the Base Path (Ensuring root access for Cloudflare)
-const basePath = "/";
-
 export default defineConfig({
-  base: basePath, 
+  base: "/", 
   plugins: [
     react(),
     tailwindcss(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
+    // ONLY use the error overlay in development. 
+    // This prevents the 500 error on production.
+    ...(process.env.NODE_ENV === "development" ? [runtimeErrorOverlay()] : []),
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
       ? [
           await import("@replit/vite-plugin-cartographer").then((m) =>
             m.cartographer({
@@ -40,11 +37,11 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname),
   build: {
-    // Fixed: Changed from dist/public to dist
-    outDir: path.resolve(import.meta.dirname, "dist"),
+    outDir: "dist",
     emptyOutDir: true,
     assetsDir: "assets",
-    sourcemap: true, // Useful for debugging that label.tsx error
+    // Set to false to see if it fixes the Cloudflare upload error
+    sourcemap: false, 
   },
   server: {
     port,
