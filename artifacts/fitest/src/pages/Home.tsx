@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "wouter";
@@ -269,6 +268,14 @@ export default function Home() {
       setConsentMedical(false);
       setConsentPrivacy(false);
       setPhase("consent");
+      return;
+    }
+    const storedAudit = localStorage.getItem("fitest_demo_audit");
+    if (storedAudit === "business" || storedAudit === "gym") {
+      setAuditPath(storedAudit as AuditPath);
+      setConsentMedical(false);
+      setConsentPrivacy(false);
+      setPhase("consent");
     }
   }, []);
 
@@ -277,6 +284,7 @@ export default function Home() {
 
   const handleSelectAudit = (path: AuditPath) => {
     setAuditPath(path);
+    try { localStorage.setItem("fitest_demo_audit", path); } catch { /* non-critical */ }
     setConsentMedical(false);
     setConsentPrivacy(false);
     setPhase("consent");
@@ -350,6 +358,13 @@ export default function Home() {
       }
       const prev = JSON.parse(localStorage.getItem("fitest_results") || "[]");
       localStorage.setItem("fitest_results", JSON.stringify([record, ...prev]));
+      if (clientId) {
+        localStorage.setItem(
+          `fitest_demo_result_${clientId}`,
+          JSON.stringify(record)
+        );
+      }
+      try { localStorage.setItem("fitest_demo_audit", auditPath || ""); } catch { /* non-critical */ }
     } catch { /* non-critical */ }
   };
 
