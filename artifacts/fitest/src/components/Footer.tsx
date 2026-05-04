@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import Logo from "./Logo";
 
 const LEGAL_LINKS = [
   { label: "Privacy Policy", href: "/privacy-policy" },
@@ -12,10 +13,11 @@ export default function Footer() {
     <footer className="border-t border-border/50 bg-background mt-auto print:hidden">
       <div className="container mx-auto px-6 max-w-5xl py-12 text-center">
 
-        {/* Logo */}
-        <div className="flex items-center justify-center gap-0.5 mb-3">
-          <span className="text-lg font-black text-primary tracking-tighter">F</span>
-          <span className="text-lg font-black tracking-tighter text-foreground">ITEST</span>
+        {/* Shared Logo Component */}
+        <div className="flex items-center justify-center mb-3">
+          <Link href="/">
+            <Logo className="text-lg" />
+          </Link>
         </div>
 
         <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
